@@ -1,5 +1,5 @@
-SRCS = main.c z_math.c add_z.c subtract_z.c multiply_z.c divide_z.c
-OBJS = main.o z_math.o add_z.o subtract_z.o multiply_z.o divide_z.c
+SRCS = main.c z_math.c
+OBJS = main.o z_math.o
 BIN 	  = zrpn
 CC_FLAGS =  -ansi -Wall -pedantic
 CC = gcc
