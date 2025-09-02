@@ -521,7 +521,6 @@ int main(void)
 								 * where we don't drop, but the polar flag is unset */
 			else
 			{
-				printf("in the final else\n");
 				z_stack[0]->sign_zre[0] = result->sign_zre[0];
 				z_stack[0]->sign_zim[0] = result->sign_zim[0];	
 				z_stack[0]->abs_zre = result->abs_zre;
@@ -557,7 +556,7 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 
 	polar_char = ' ';
 
-	printf("\n\n=========================================================\n\n");
+	printf("\n\n==================...z rpn.....==================\n\n");
 
 	for (x=SIZE-1;x>=1;--x)
 	{
@@ -570,8 +569,10 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 		
 		/* print the members of the stack pointer's z_number struct  (we do down from top
 		 * to ""y" in one block */
-    	printf("z_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", 
-			x,&p[x],*(&p[x]),
+    	printf("z_stack[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
+    /*	printf("z_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
+		/*	x,&p[x],*(&p[x]), */
+			x,
 			p[x]->sign_zre[0], p[x]->abs_zre,
 			polar_char,
 			p[x]->sign_zim[0], p[x]->abs_zim);
@@ -585,8 +586,10 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 			polar_char = '@';
 		else
 			polar_char = ' ';
-    		printf("\nz_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", 
-			x,&p[0],*(&p[0]),
+    		printf("\nz_stack[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
+    	/*	printf("\nz_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
+			x,
+		/*	x,&p[0],*(&p[0]),*/
 			p[0]->sign_zre[0], p[0]->abs_zre,
 			polar_char,
 			p[0]->sign_zim[0], p[0]->abs_zim);
@@ -595,23 +598,33 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 
 void help(void)
 {
-	printf("Experimental RPN calculator with complex stack\n\n");
-	printf("Usage:\n");
-	printf("\nAt \"Enter Real\" propmt type either a command prefixed by the # sign\n");
-	printf("......or a number to put on the stack \n");
-	printf("\nFor number entry type the number and press <Enter>\nFor zero just press Enter\n");
-	printf("For a complex number : \nat the \"Enter Imaginary:\" prompt enter the imaginary part.\nFor zero just press Enter\n\n");
-	printf("Commands (prefix by #): \n");
-	printf("Add		+\n");
-	printf("Subtract	-\n");
-	printf("Multiply	*\n");
-	printf("Divide		/\n\n");
-	printf("Inverse 1/z		i\n");
-	printf("Complex Conjugate	c\n");
-	printf("Rect -> Polar		p\n");
-	printf("Polar -> Rect		r\n\n");
-	printf("This HELP		h\n");
-	printf("Quit			q\n");
+	printf("\n\n\tExperimental RPN calculator with complex stack\n\n");
+	
+	printf("\tUsage:\n");
+
+	printf("\n\tAt the \"Enter Real\" prompt type either:\n");
+    printf("\tA command prefixed by the # sign\n");
+	printf("\t\tor\n");
+    printf("\ta number to put on the stack \n");
+
+	printf("\n\tFor number entry type:\n");
+    printf("\tthe number and press <Enter>\n");
+	printf("\tFor zero just press Enter\n");
+	printf("\tFor a complex number : \n");
+	printf("\tat the \"Enter Imaginary:\" prompt enter the imaginary part.\n");
+	printf("\tFor zero just press Enter\n\n");
+
+	printf("\tCommands are prefix by #: \n");
+	printf("\t\tAdd		#+\n");
+	printf("\t\tSubtract	#-\n");
+	printf("\t\tMultiply	#*\n");
+	printf("\t\tDivide		#/\n\n");
+	printf("\t\tInverse 1/z		#i\n");
+	printf("\t\tComplex Conjugate	#c\n");
+	printf("\t\tRect -> Polar		#p\n");
+	printf("\t\tPolar -> Rect		#r\n\n");
+	printf("\tThis HELP		#h\n");
+	printf("\tQuit			#q\n");
 
 
 
