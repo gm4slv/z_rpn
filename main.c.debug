@@ -1,0 +1,611 @@
+#include "defs.h"
+
+
+void show_stack(struct z_number **p);
+void help(void);
+
+int main(void)
+{
+
+	int a=0;	/* for iterating across the stack for raising and dropping */
+	int i;		/* points to the top level of the stack */    
+	int p;		/* redundant?*/	
+	int x;		/* for general loop control: used in various places */	
+
+	
+	struct z_number *z_stack[SIZE];		/* the complex stack = holds pointers to the complex numbers */
+	
+	struct z_number *result;			/* a pointer to the result of a calculation */
+	struct z_number *temp;				/* a temporary pointer to a potential free-able memory, after a stack-raise */
+	struct z_number *drop_temp;			/* a temporary pointer to a potential free-able membry, after a stack-drop  */
+
+	float real;							/* input real value */
+	float im;							/* input imaginary value */
+	
+	char opcode;						/* the requested arithmetic function (+ - * / r p i c) */ 
+	int drop_flag;
+	int polar_flag=0;					/* a flag indicating we're displaying a polar-format number, to control the
+										   display of @ */
+	int null_flag = 0;					/* a flag to do an NOP on the stack following an un-recognizable user entry */
+	char line[20];						/* a char-string to hold the user input prior to parsing */
+	int make_polar;						/* a flag to send to make_z() when the user enters an imaginary part prefixed by @ 
+										   to indicate a polar format input */
+
+    /* Initializing the stack
+	 * fill with the correct number
+	 * of 0 + 0j rectangular format
+	 * complex numbers
+	 *
+	 * i keeps track ot the top of the stack
+	 * and controls the raise / drop funtionality
+	 *
+	 * when the stack is full i will give the topmost
+	 * stack index */
+
+	for(i=0;i<SIZE;++i)
+	{
+		z_stack[i] = make_z(0,0,0);
+	}
+
+	if (i > SIZE-1)
+		i = SIZE-1;
+
+	/* show_stack() is a function that takes the hase address of
+	 * the z_stack and iterates across each element */
+	show_stack(z_stack);
+	
+
+	/* start the endless process */
+	while(1)
+	{	
+		/* the internal while() loop handles user input
+		 * 
+		 * if an "OPCODE" input is detected via prefix of #
+		 * the while loop breaks and drops to the switch-case
+		 * selection of the wanted operation */
+		while(1)
+		{	
+		//	printf("At start of entty while with make_polar = %d\n", make_polar);
+			make_polar = 0;
+		//	printf("reset make_polar -> %d\n", make_polar);
+
+			printf("Enter Real (or #_ command) : ");
+			fgets(line, sizeof(line), stdin);
+			if (line[0] == 35) /* # to enter opcode */
+			{
+				opcode = line[1];
+				printf(" %c \n",opcode);
+				break;
+			}
+
+			/* if the input wasn't prefixed by # (char 35) check it for 
+			 * a valid numerical input 
+			 *
+			 * a blank line is taken to mean "no input" or "zero this part"
+			 *
+			 * the first char of the input line is tested to verify it's a 
+			 * number or a narrow range of ASCII values to ensure a user entry
+			 * of a negative number is read correctly (a minus sign is ASCII 45 (0x2d).
+			 *
+			 * */
+			else
+			{
+				if (line[0] == '\n')
+					real = '\n';
+				
+				else if (line[0] > 44 && line[0] < 58)
+				{
+					sscanf(line, "%f", &real);
+				}
+				else
+				{
+					real = 0;
+				}				
+				polar_flag = 0;	
+			
+
+				printf("Enter Imaginary : ");
+				fgets(line, sizeof(line), stdin);
+				
+				if (line[0] == '\n')
+						im = '\n';
+				
+				else if (line[0] > 44 && line[0] < 58)
+				{
+					sscanf(line, "%f", &im);
+				}
+				
+				/* if the imaginary entry is prefixed by @ (ASCII 64 (0x40)
+				 * the user is requesting POLAR mode 
+				 * the number (angle) is then read from the rest of the 
+				 * line string - we shuffle the chars in the string along
+				 * to the left by one
+				 * */
+
+				else if (line[0] == 64)  /* @ for polar argument */
+				{
+					for (x = 0;x<strlen(line);++x)
+					{
+						line[x] = line[x+1];
+					}
+					
+					sscanf(line, "%f", &im);
+					
+					/* this is a POLAR format number - we send the "make_polar"
+					 * along with real & imaginary to the make_z() function
+					 */
+
+					make_polar = 1;
+				}
+				else
+				{
+					im = 0;
+				}	
+
+
+		
+			/**********************************
+			 *
+			 * STACK RAISE
+			 *
+			 * ********************************/
+				
+				printf("at start of raise while() a = %d, i = %d \n",a,i);
+				
+				/*****************************************************
+				 *
+				 *  we take the existing members of the z_stack and push them upwards	
+				 *  starting at the top of the stack pulling each value up from below
+				 *  
+				 *  when we reach the bottom of the stack we create a new z_number
+				 *  struct by calling 
+				 *
+				 *  make_z(real, im, polar) 
+				 *  
+				 *  and put the returned pointer to it into z_stack[0]
+				 *	
+				 *	memory is handled by noting pointer held at the top level of the stack (before
+				 *	it's lifted) and storing it in a temp pointer.
+				 *
+				 *	If the pointer temp is the same as the pointer in the top level
+				 *	of the stack we can't free the memory at that location, as it's
+				 *	currently needed in active use on the stack. This situation occurs
+				 *	due to the stack dropping (and copying the top level into the one below
+				 *	and again each time it drops). Further raises from new user input
+				 *	will push the stack upwards, and eventually the top level will be pushed
+				 *	off and "temp" will be unique (not the same as the values on the stack.
+				 *
+				 *  When it's dectected that the value pushed off the top is not in use
+				 *  on the stack we can free() this.
+				 *
+				 *  A similar mechanism is used during DROP.
+				 *
+				 */
+				
+				a=i;
+
+				temp = z_stack[SIZE-1];		/* prior to raising the stack we record the curent TOP pointer */ 
+
+			//	printf("&z_stack[%d] = %p *(&z_stack[%d] = %p temp = %p \n", a, &z_stack[a], a, *(&z_stack[a]), temp);
+				while(a>0)
+				
+				
+				{	
+					/* we iterate down through the stack moving each value up one level */
+			//		printf("in raise while() a = %d, i = %d \n", a,i);
+
+					z_stack[a] = z_stack[a-1];
+					--a;								/* a counts down from "top of the stack" to 1 */
+					
+			//		printf("&z_stack[%d] = %p *(&z_stack[%d] = %p &temp = %p, *(&temp) = %p \n", a, &z_stack[a], a, *(&z_stack[a]), &temp, *(&temp));
+				}
+
+				/* we test the pointer of the previous top of the stack to see if the same pointer is still on the
+				 * stack. 
+				 *
+				 * If it IS we can't free() 
+				 *
+				 * If it isn't, and we've got "fresh" data on the stack, right to the top, we CAN free the memory pointed to 
+				 * by temp
+				 *
+				 */
+
+				if(temp == z_stack[SIZE-1])
+					;
+			//		printf("Can't free temp %p\n", temp);
+				else
+				{
+			//		printf("CAN free temp %p\n", temp);
+					free(temp);
+					temp = NULL;
+				}
+
+				/*
+				 *	we've moved everything up by one, and removed the old top of the stack (and possibly
+				 *	free'd it's memory)
+				 *
+				 *	now we make a new z_number struct and get a pointer
+				 *
+				 * first we handle the signs of real and imaginary (the struct stores the 
+				 * absolute value as an int and the sign as a char
+				 *
+				 * it also stores an int to indicate if this is a POLAR value. If so then 
+				 * real is the magnitude and im is the angle of the POLAR. The struct member
+				 *
+				 *  ->polar  is 1 for POLAR and 0 for RECT
+				 *
+				 *
+				 */
+
+				if (real == '\n' && im == '\n')
+				{
+
+					real = z_stack[0]->abs_zre;
+					if(z_stack[0]->sign_zre[0] == '-')
+					{
+						real = -1*real;
+					}
+
+
+					im = z_stack[0]->abs_zim;
+					if(z_stack[0]->sign_zim[0] == '-')
+					{
+						im = -1*im;
+					}
+
+				}
+				else           /* THIS MIGHT BE REDUNDANT AFTER THE MODIFACTION TO THE INPUT HANDLING ROUTINE */
+				{
+					if (real == '\n')
+						real = 0;
+
+					if (im == '\n')
+						im = 0;
+				}
+				
+				
+				/**********************************************
+				 *
+				 * 	we make a new struct, and assign the returned pointer to 
+				 * 	the lowest stack level z_stack[0]
+				 *
+				 */
+
+				z_stack[0] = make_z(real, im, make_polar);
+				
+				/* this ++i is here in case we decide NOT to pre-fill the stack in the initialization
+				 * 
+				 * if this is changed we might build the stack one user entry at a time, and
+				 * "i" keeps track of where the current top of stack is
+				 * */
+
+				++i;
+				
+				/*  i can't grow beyond the top of the allowed stack (set in the #define SIZE macro in defs.h */
+
+				if(i > SIZE-1)
+					i = SIZE - 1;
+
+			/********************
+			 * 
+			 * print stack after raise
+			 *
+			 * **************************/
+				polar_flag = 0;	
+					
+				show_stack(z_stack);
+		
+			}
+		}	    /* the WHILE() loop spins, looking for more user input */
+
+
+
+
+		
+
+		/* we've got the stack built and this is outside the inner while() loop - we get here
+		 * from the break; statement in the input handling routine - when a 
+		 * user command is entered (identified by a prefix of #
+		 *
+		 * the input routine sets "opcode" to the char AFTER the # prefix ( opcode = line[1] )
+		 *
+		 *
+		 */
+		
+		   
+		   
+		polar_flag = 0;  /* default to RECT - -POLAR is set by the switch-case when a RECT->POLAR 
+							operation is requested */
+
+		null_flag = 0;	 /* default to "not NULL" - null_flag is SET by the switch-case leter on */
+		
+		/* each chosen operation will generally return a pointer to a
+		 * new z_number. Most will also require the stack to drop
+		 * - whereby z_stack[0] will hold the result, z_stack[1]
+		 *   will be overwritten by the level above, and so on
+		 *   until the top stack value is copied down to the level below.
+		 *  
+		 *   the mechanism is controlled by flags
+		 *
+		 *   drop_flag
+		 *   polar_flag
+		 *   null_flag
+		 *
+		 *  
+		 */
+
+		switch (opcode)
+		{
+			case '+':
+				result = add_z(z_stack[1], z_stack[0]);
+				drop_flag = 1;
+				break;
+			case '-':
+				result = subtract_z(z_stack[1], z_stack[0]);
+				drop_flag = 1;
+				break;
+			case '*':
+				result = multiply_z(z_stack[1], z_stack[0]);
+				drop_flag = 1;
+				break;
+			case '/':
+				result = divide2_z(z_stack[1], z_stack[0]);
+				drop_flag = 1;
+				break;
+			case 'i':
+			case 'I':
+				result = invert_z(z_stack[0]);
+				drop_flag = 0;
+				break;
+			case 'c':
+				result = conjugate_z(z_stack[0]);
+				drop_flag = 0; 						/* we don't drop the stack, simply replace z_stack[0] with the
+													  returned pointer to the location the complex-conjugate */
+				break;
+			
+				
+			case 'p':										/* rect -> polar */
+															
+				if(!z_stack[0]->polar)						/* if the z_number in stack[0] isn't already POLAR
+															   then we send stack[0]'s pointer to the rect->polar()
+															   funtion. the result is a pointer to the 
+															   new z_number which holds the mag/angle (and its sign
+															   along with a POLAR flag */
+					result = rect_to_polar(z_stack[0]);
+				
+				else
+					result=z_stack[0];						/* other wise, were' already POLAR and we copy the 
+															   pointer of the existing z_number into the result
+															   pointer.*/
+				polar_flag = 1;								/* we set a flag to show we've got a POLAR number
+															   which is used later to format the display */
+				drop_flag = 0;								/* this is a simple conversion - no requirement to 
+															   drop the stack */
+				break;
+			
+			case 'r':										/* a similar procedure for the reverse process */
+				if(z_stack[0]->polar)
+					result = polar_to_rect(z_stack[0]);
+				else
+					result=z_stack[0];
+				polar_flag = 0;
+				drop_flag = 0;
+				break;
+			
+			case 'h':										/* a rudimentary HELP feature...... */
+				help();
+				drop_flag = 0;
+				null_flag = 1;								/* NULL flag - do nothing to the stack */
+				break;
+			case 'q':
+			case 'Q':										/* clean up  - find which pointers are "unique" and not
+															   copied into multiple stack levels
+															   free them as approriate
+															 */
+				for (x = SIZE-1;x>1;--x)
+				{
+					if(z_stack[x] != z_stack[x-1])
+					{
+						printf("  Freeing stack[%d] ....%p \n", x, z_stack[x]);
+						free(z_stack[x]);
+					}
+				}
+				printf("freeing z_stack[1]\n");
+				free(z_stack[1]);
+				printf("freeing z_stack[0]\n");
+				free(z_stack[0]);
+				return(0);									/* Gracefully QUIT the program */
+
+			default:
+				drop_flag = 0;
+				null_flag = 1;
+		}                                              		/* the Switch - Case ends */
+
+
+
+		/* we fall through to the rest of the code.....
+		 * handling the stack as necessary after taking in user input, performing
+		 * calculations and (in general) having a results pointer
+		 * to the z_number struct who's contents need to be pointed to 
+		 * at the bottom of the stack
+		 * */
+
+
+		/*************************************
+		 *
+		 *  DROP STACK
+		 *
+		 * **********************************
+		 */
+
+		/* we test first for POLAR format 
+		 * if the flag is set we assign the various members of the z_stack[0] struct
+		 * with those from the results pointer. A POLAR number will assign a 1 to the struct's
+		 * polar member. 
+		 * This is used later to detect the format for display in show_stack() as well as
+		 * in the decision making in the switch-case.
+		 *
+		*/
+
+		if(polar_flag)
+		{
+				z_stack[0]->sign_zre[0] = result->sign_zre[0];
+				z_stack[0]->sign_zim[0] = result->sign_zim[0];;	
+				z_stack[0]->abs_zre = result->abs_zre;
+				z_stack[0]->abs_zim = result->abs_zim;
+				z_stack[0]->polar = 1;
+				free(result);	
+			
+		}
+
+
+		/* if this is a newly converted Polar number then drop_flag won't be set, and the the following is skipped
+		 * otherwise, in general it's done for most other cases */
+
+		if(drop_flag)
+		{
+			a = 1;
+			/* a similar process to decide on free'ing the discarded "y" stack value - as long is it's not
+			 * also allocated to levels above - c.f. the raise stack routine */
+			drop_temp = z_stack[1];	
+		//	printf("&z_stack[%d] = %p *z_stack[%d] = %p drop_temp = %p \n", a, &z_stack[a], a, z_stack[a], drop_temp);	
+			while(a<i)
+				{
+
+					/* starting at level 1 (i.e. "y" stack) we copy the value down from the level above
+					 * and do so until a reaches the top of the stack (i) */
+					z_stack[a] = z_stack[a+1];
+					++a;
+				}
+				
+				/* then we assing the bottom "x" stack with the members of the results pointer */
+				z_stack[0]->sign_zre[0] = result->sign_zre[0];
+				z_stack[0]->sign_zim[0] = result->sign_zim[0];	
+				z_stack[0]->abs_zre = result->abs_zre;
+				z_stack[0]->abs_zim = result->abs_zim;
+				z_stack[0]->polar = result->polar;
+
+				/* the results pointer is now un-needed and can be free'd */
+		//		printf("In drop.... freeing result %p\n", result);
+				free(result);	
+				
+				/* we check the pointer from the old "y" stack level with the one above
+				 * if it's the same, we can't free the old "Y" memory location
+				 * because it's also the location of the levels upwards to the top of the stack
+				 *
+				 * if it's not the same as the level above we don't need it any more and it can be free'd.
+				 *
+				 * the new "y" level is (generally) different to the drop_temp pointer, as the new
+				 * "y" level has been dropped down from above. That's why we need the drop_temp pointer
+				 * to keep track of the (possibl) unused memory while we decide what to do */
+
+				if(drop_temp == z_stack[2])
+					;
+		//		printf("can't free z_stack[1]  %p\n", drop_temp);
+				else
+				{
+		//			printf("CAN free z_stack[1] \n");
+
+					free(drop_temp);
+					drop_temp = NULL;
+				}	
+		}
+		else  /* if the DROP FLAG isn't set we check for NULL flag */
+		{
+			if(null_flag)
+				;  /*NOP if Null Flag is set */
+
+			else if(!polar_flag) /* otherwise (as long as the polar flag isn't set */
+								/* this option is for the polar -> rect option
+								 * where we don't drop, but the polar flag is unset */
+			{
+				z_stack[0]->sign_zre[0] = result->sign_zre[0];
+				z_stack[0]->sign_zim[0] = result->sign_zim[0];	
+				z_stack[0]->abs_zre = result->abs_zre;
+				z_stack[0]->abs_zim = result->abs_zim;
+				z_stack[0]->polar = result->polar;
+				free(result);
+			}
+		}
+
+		/***************************************
+		 *
+		 *   PRINT STACK AFTER DROP
+		 *
+		 ***************************************/
+
+		show_stack(z_stack);
+
+		}  		/* the INNER while() loop spins */
+    return 0;
+}
+
+void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stack variable is passed in
+										 which is a pointer to the pointer members of the stack array
+										 which themselves hold pointers to the z_number struct locations.*/
+{
+	char polar_char; 	/* display formatting - the polar char is either a space or a @ */
+	int x;				/* for looping across the stack array */
+
+	polar_char = ' ';
+
+	printf("\n\n=========================================================\n\n");
+
+	for (x=SIZE-1;x>=1;--x)
+	{
+		if(p[x]->polar == 1) /* check the "polar" member of the z_stack pointer being handled
+								and if set we assign @ as an identifier of POLAR format
+								and if unset we print a space */
+			polar_char = '@';
+		else
+			polar_char = ' ';
+		
+		/* print the members of the stack pointer's z_number struct  (we do down from top
+		 * to ""y" in one block */
+    	printf("z_stack[%0d]\t&z_stack[%p]\t*(&z_stack[%p])\t%c%.3f %c %c%.3f j \n", 
+			x,&p[x],*(&p[x]),
+			p[x]->sign_zre[0], p[x]->abs_zre,
+			polar_char,
+			p[x]->sign_zim[0], p[x]->abs_zim);
+	}
+
+
+		/* then space down and do the bottom "X" stack level on a line to itself. This is where our
+		 * main result is shown */
+
+		if(p[0]->polar == 1)
+			polar_char = '@';
+		else
+			polar_char = ' ';
+    		printf("\nz_stack[%0d]\t&z_stack[%p]\t*(&z_stack[%p])\t%c%.3f %c %c%.3f j \n\n", 
+			x,&p[0],*(&p[0]),
+			p[0]->sign_zre[0], p[0]->abs_zre,
+			polar_char,
+			p[0]->sign_zim[0], p[0]->abs_zim);
+}
+
+
+void help(void)
+{
+	printf("Experimental RPN calculator with complex stack\n\n");
+	printf("Usage:\n");
+	printf("\nAt \"Enter Real\" propmt type either a command prefixed by the # sign\n");
+	printf("......or a number to put on the stack \n");
+	printf("\nFor number entry type the number and press <Enter>\nFor zero just press Enter\n");
+	printf("For a complex number : \nat the \"Enter Imaginary:\" prompt enter the imaginary part.\nFor zero just press Enter\n\n");
+	printf("Commands (prefix by #): \n");
+	printf("Add		+\n");
+	printf("Subtract	-\n");
+	printf("Multiply	*\n");
+	printf("Divide		/\n\n");
+	printf("Inverse 1/z		i\n");
+	printf("Complex Conjugate	c\n");
+	printf("Rect -> Polar		p\n");
+	printf("Polar -> Rect		r\n\n");
+	printf("This HELP		h\n");
+	printf("Quit			q\n");
+
+
+
+}
+
