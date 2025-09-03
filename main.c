@@ -407,6 +407,14 @@ int main(void)
 				result = divide2_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
+			case '.':
+				result = dot_product(z_stack[1], z_stack[0]);
+				drop_flag = 1;
+				break;
+			case 'x':
+				result = cross_product(z_stack[1], z_stack[0]);
+				drop_flag = 1;
+				break;
 			case 'i':
 			case 'I':
 				result = invert_z(z_stack[0]);
@@ -454,7 +462,7 @@ int main(void)
 				null_flag = 1;								/* NULL flag - do nothing to the stack */
 				drop_flag = 0;
 				break;	
-			case 'x':									/* ROLL DOWN */
+			case 'a':									/* ROLL DOWN */
 				swap_temp = z_stack[0];
 				for (i=0;i<SIZE-1;++i)
 				{

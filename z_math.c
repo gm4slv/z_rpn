@@ -293,27 +293,38 @@ struct z_number *dot_product(struct z_number *z1, struct z_number *z2)
 {
 	struct z_number *result_ptr;
 	struct z_number *z3;
-	
+	int polar_in_z1 = 0;
+	int polar_in_z2 = 0;
+
+
 	if(z1->polar)
 	{
 		z1 = polar_to_rect(z1);
+		polar_in_z1 = 1;
 	}
 	if(z2->polar)
 	{
 		z2 = polar_to_rect(z2);
+		polar_in_z2 = 1;
 	}
 	
 	
 	z3 = conjugate_z(z2);
-
+	
 	result_ptr= multiply_z(z1, z3);
+
+	if(polar_in_z1)
+		free(z1);
+	if(polar_in_z2)
+		free(z2);
+	
+	free(z3);
 
 	/* dot product is the Re part... so set Im to zero ... BUT it isn't displayed in
 	 * print_result() anyway  */
 
 	result_ptr->abs_zim = 0;
 
-	free(z3);
 
 	return(result_ptr);
 }
@@ -327,14 +338,19 @@ struct z_number *cross_product(struct z_number *z1, struct z_number *z2)
 	struct z_number *z6;
 	struct z_number *z7;
 	struct z_number *z8;
-	
+	int polar_in_z1 = 0;
+	int polar_in_z2 = 0;
+
+
 	if(z1->polar)
 	{
 		z1 = polar_to_rect(z1);
+		polar_in_z1 = 1;
 	}
 	if(z2->polar)
 	{
 		z2 = polar_to_rect(z2);
+		polar_in_z2 = 1;
 	}
 	
 	
@@ -359,6 +375,11 @@ struct z_number *cross_product(struct z_number *z1, struct z_number *z2)
 	 *
 	 * Now I calculate the intermediate parts as new z_numbers and they are ALL free'd at the end:
 	 */
+
+	if(polar_in_z1)
+		free(z1);
+	if(polar_in_z2)
+		free(z2);
 
 	free(z3);	
 	free(z4);
