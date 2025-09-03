@@ -46,5 +46,7 @@ struct z_number *cross_product(struct z_number *z1, struct z_number *z2);
 /* function to find the unit vector of a complex number */
 struct z_number *uvec_z(struct z_number *z1);
 
+void show_stack(struct z_number **p);
 
+void help(void);
 

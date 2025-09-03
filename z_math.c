@@ -2,68 +2,6 @@
 
 const float PI = 3.14159265359;
 
-struct z_number *make_z(float in_re, float in_im, int p)
-{
-
-	struct z_number *z_ptr;
-
-	char sign_re[1];
-	char sign_im[1];
-
-	z_ptr=(struct z_number *)malloc(sizeof(struct z_number) * 1);
-	
-	if ( z_ptr == NULL)
-	{
-		puts("Malloc() error");
-		exit(1);
-	}
-	
-
-	/* we store the absolute value of real & imaginary along with the 
-	 * char representing the sign. */
-	if (in_re < 0)
-	{
-		sign_re[0] = '-';
-		in_re = in_re * -1;
-	}
-	else
-	{
-		sign_re[0] = ' ';
-		
-	}
-
-	if (in_im < 0)
-	{
-		sign_im[0] = '-';
-		in_im = in_im * -1;
-	}
-	else
-	{
-		sign_im[0] = '+';
-	
-	}
-	
-	/* we are p assing the struct members using pointer notation
-	 * with the values and char (for sign) before returning the
-	 * pointer for the location of the filled-in-with-data struct */
-
-	z_ptr->sign_zre[0] = sign_re[0];
-	/*
-	if(!p)
-		z_ptr->sign_zim[0] = sign_im[0];
-	else
-		z_ptr->sign_zim[0] = '@';
-	*/
-
-	z_ptr->sign_zim[0] = sign_im[0];
-	z_ptr->abs_zre = in_re;
-	z_ptr->abs_zim = in_im;
-	z_ptr->polar = p;
-	
-	return (z_ptr);
-}
-
-
 /* this is a simplified divide funtion that uses the existing
  * invert_z and multiply_z functions 
  *
