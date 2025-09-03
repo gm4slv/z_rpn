@@ -428,14 +428,17 @@ struct z_number *cross_product(struct z_number *z1, struct z_number *z2)
 struct z_number *uvec_z(struct z_number *z1)
 {
 	struct z_number *result_ptr;
+	struct z_number *ptr;
 	struct z_number *z3;
 	float z1_re;
 	float z1_im;
 	float z3_re;
-	
+	int polar_in = 0;
+
 	if(z1->polar)
 	{
 		z1 = polar_to_rect(z1);
+		polar_in = 1;
 	}
 
 	z3 = rect_to_polar(z1);
@@ -466,7 +469,15 @@ struct z_number *uvec_z(struct z_number *z1)
 	z1_re = z1_re / z3_re;
 	z1_im = z1_im / z3_re;
 	
-	result_ptr = make_z(z1_re, z1_im, 0);
+	if (!polar_in)
+		result_ptr = make_z(z1_re, z1_im, 0);
+	else
+	{
+		ptr = make_z(z1_re, z1_im, 0);
+		result_ptr = rect_to_polar(ptr);
+		free(ptr);
+		free(z1);
+	}
 
 	free(z3);
 

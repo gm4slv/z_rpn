@@ -447,14 +447,14 @@ int main(void)
 				drop_flag = 0;
 				break;
 			
-			case 'z':
+			case 'z':									/* Swap x<>y */
 				swap_temp = z_stack[0];	
 				z_stack[0] = z_stack[1];
 				z_stack[1] = swap_temp;
 				null_flag = 1;								/* NULL flag - do nothing to the stack */
 				drop_flag = 0;
 				break;	
-			case 'x':
+			case 'x':									/* ROLL DOWN */
 				swap_temp = z_stack[0];
 				for (i=0;i<SIZE-1;++i)
 				{
@@ -465,6 +465,10 @@ int main(void)
 				null_flag = 1;								/* NULL flag - do nothing to the stack */
 				drop_flag = 0;
 				break;	
+			case 'u':
+				result = uvec_z(z_stack[0]);
+				drop_flag = 0;
+				break;
 			case 'h':										/* a rudimentary HELP feature...... */
 				help();
 				drop_flag = 0;
