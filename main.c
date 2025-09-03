@@ -11,8 +11,9 @@ int main(void)
 	int i;		/* points to the top level of the stack */    
 	int p;		/* redundant?*/	
 	int x;		/* for general loop control: used in various places */	
+	int real_null = 0;   /* to indicate an empty input string for controlling stack entry */
+	int im_null = 0;
 
-	
 	struct z_number *z_stack[SIZE];		/* the complex stack = holds pointers to the complex numbers */
 	
 	struct z_number *result;			/* a pointer to the result of a calculation */
@@ -71,10 +72,19 @@ int main(void)
 
 			printf("\nEnter Real (or #_ command) : ");
 			fgets(line, sizeof(line), stdin);
+			printf("strlen(line) = %d\n", strlen(line));
+			line[strlen(line)-1] = '\0';
+			printf("strlen(line) = %d\n", strlen(line));
+			
+			if(strlen(line) == 0)
+				real_null = 1;
+			else
+				real_null = 0;
+
 			if (line[0] == 35) /* # to enter opcode */
 			{
 				opcode = line[1];
-				printf(" %c \n",opcode);
+	/*			printf(" %c \n",opcode); */
 				break;
 			}
 
@@ -91,11 +101,14 @@ int main(void)
 			else
 			{
 				if (line[0] == '\n')
+				{
+					printf(" ASSIGNING real = \\n !!!!! \n");
 					real = '\n';
-				
+				}
 				else if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &real);
+					printf(" real entered %f\n", real);
 				}
 				else
 				{
@@ -104,16 +117,32 @@ int main(void)
 				polar_flag = 0;	
 			
 
+				/* test \n */
+
+				if(real == '\n')
+					printf("REAL = \\n %f !!!!! \n", real);
+
+
 				printf("Enter Imaginary : ");
 				fgets(line, sizeof(line), stdin);
+				line[strlen(line)-1] = '\0';
 				
+				if(strlen(line) == 0)
+					im_null = 1;
+				else
+					im_null = 0;
+
 				if (line[0] == '\n')
+				{
+						printf(" ASSIGNING im = \\n !!!!! \n");
 						im = '\n';
-				
+				}
 				else if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &im);
+					printf(" imag entered %f\n", im);
 				}
+
 				
 				/* if the imaginary entry is prefixed by @ (ASCII 64 (0x40)
 				 * the user is requesting POLAR mode 
@@ -143,6 +172,10 @@ int main(void)
 				}	
 
 
+				/* test \n */
+
+				if(im == '\n')
+					printf("IM = \\n %f !!!!! \n", im);
 		
 			/**********************************
 			 *
@@ -150,7 +183,6 @@ int main(void)
 			 *
 			 * ********************************/
 				
-				printf("at start of raise while() a = %d, i = %d \n",a,i);
 				
 				/*****************************************************
 				 *
@@ -211,11 +243,11 @@ int main(void)
 				 */
 
 				if(temp == z_stack[SIZE-1])
-					;
-			//		printf("Can't free temp %p\n", temp);
+					;		
+		/*			printf("Can't free temp %p\n", temp); */
 				else
 				{
-			//		printf("CAN free temp %p\n", temp);
+		/*			printf("CAN free temp %p\n", temp); */
 					free(temp);
 					temp = NULL;
 				}
@@ -237,7 +269,8 @@ int main(void)
 				 *
 				 */
 
-				if (real == '\n' && im == '\n')
+				printf(" after free(temp) real %f im %f \n", real, im);
+				if (real_null == 1 && im_null == 1)
 				{
 
 					real = z_stack[0]->abs_zre;
@@ -253,15 +286,23 @@ int main(void)
 						im = -1*im;
 					}
 					make_polar = z_stack[0]->polar;
+				
+					
+					printf(" after if real == \\n && im==\\n : real %f  im %f \n", real, im);
 
 				}
-				else           /* THIS MIGHT BE REDUNDANT AFTER THE MODIFACTION TO THE INPUT HANDLING ROUTINE */
+				else      
 				{
-					if (real == '\n')
+					if (real_null == 1)
+					{
+						printf(" real == \\n \n");
 						real = 0;
-
-					if (im == '\n')
+					}
+					if (im_null == 1)
+					{
 						im = 0;
+						printf(" im == \\n \n");
+					}
 				}
 				
 				
@@ -272,6 +313,7 @@ int main(void)
 				 *
 				 */
 
+				printf(".. going to make_z() with %f : %f : %d \n", real, im, make_polar);
 				z_stack[0] = make_z(real, im, make_polar);
 				
 				/* this ++i is here in case we decide NOT to pre-fill the stack in the initialization
@@ -411,9 +453,9 @@ int main(void)
 						free(z_stack[x]);
 					}
 				}
-				printf("freeing z_stack[1]\n");
+				printf("  Freeing stack[1] ....%p\n", z_stack[1]);
 				free(z_stack[1]);
-				printf("freeing z_stack[0]\n");
+				printf("  Freeing stack[0] ....%p\n", z_stack[0]);
 				free(z_stack[0]);
 				return(0);									/* Gracefully QUIT the program */
 

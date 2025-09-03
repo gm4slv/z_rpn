@@ -305,7 +305,6 @@ struct z_number *polar_to_rect(struct z_number *z1)
          * make_z() and assign the returned pointer
          * to the result struct */
         result_ptr = make_z(result_re, result_im, 0);
-		printf("In polar_to_rect() returning %p \n", result_ptr);
 
 	return(result_ptr);
 }
