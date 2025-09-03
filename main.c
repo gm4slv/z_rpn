@@ -19,7 +19,7 @@ int main(void)
 	struct z_number *result;			/* a pointer to the result of a calculation */
 	struct z_number *temp;				/* a temporary pointer to a potential free-able memory, after a stack-raise */
 	struct z_number *drop_temp;			/* a temporary pointer to a potential free-able membry, after a stack-drop  */
-
+	struct z_number *swap_temp;			/* a temporary pointer for the "swap x<>y" function */
 	float real;							/* input real value */
 	float im;							/* input imaginary value */
 	
@@ -447,6 +447,24 @@ int main(void)
 				drop_flag = 0;
 				break;
 			
+			case 'z':
+				swap_temp = z_stack[0];	
+				z_stack[0] = z_stack[1];
+				z_stack[1] = swap_temp;
+				null_flag = 1;								/* NULL flag - do nothing to the stack */
+				drop_flag = 0;
+				break;	
+			case 'x':
+				swap_temp = z_stack[0];
+				for (i=0;i<SIZE-1;++i)
+				{
+					z_stack[i] = z_stack[i+1];
+				}
+					z_stack[SIZE-1] = swap_temp;
+				
+				null_flag = 1;								/* NULL flag - do nothing to the stack */
+				drop_flag = 0;
+				break;	
 			case 'h':										/* a rudimentary HELP feature...... */
 				help();
 				drop_flag = 0;

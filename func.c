@@ -1,5 +1,8 @@
 #include "defs.h"
 
+
+
+
 void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stack variable is passed in
 										 which is a pointer to the pointer members of the stack array
 										 which themselves hold pointers to the z_number struct locations.*/
@@ -25,7 +28,7 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
     	printf("z_stack[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
     /*	printf("z_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
 		/*	x,&p[x],*(&p[x]), */
-			x,
+			x, 
 			p[x]->sign_zre[0], p[x]->abs_zre,
 			polar_char,
 			p[x]->sign_zim[0], p[x]->abs_zim);
@@ -41,8 +44,8 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 			polar_char = ' ';
     		printf("\nz_stack[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
     	/*	printf("\nz_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
-			x,
-		/*	x,&p[0],*(&p[0]),*/
+			x, 
+		/*	x,&p[0],*(&p[0]), */
 			p[0]->sign_zre[0], p[0]->abs_zre,
 			polar_char,
 			p[0]->sign_zim[0], p[0]->abs_zim);
@@ -76,6 +79,9 @@ void help(void)
 	printf("\t\tComplex Conjugate	#c\n");
 	printf("\t\tRect -> Polar		#p\n");
 	printf("\t\tPolar -> Rect		#r\n\n");
+	printf("\t\tRoll Down			#x\n");
+	printf("\t\tSwap X<>Y			#z\n\n");
+
 	printf("\tThis HELP		#h\n");
 	printf("\tQuit			#q\n");
 

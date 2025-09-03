@@ -13,7 +13,7 @@ $(BIN) : $(OBJS)
 
 
 install : all
-	@echo "Installing $(BIN) to $(DESTDIR)$(PREFIX)/bin...."
+	@echo "Installing $(BIN) to $(DESTDIR)$(PREFIX)..."
 	@install -m 755 $(BIN) "$(DESTDIR)$(PREFIX)/$(BIN)"
 
 clean:
