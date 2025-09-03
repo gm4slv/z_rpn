@@ -404,7 +404,7 @@ int main(void)
 				drop_flag = 1;
 				break;
 			case '/':
-				result = divide_z(z_stack[1], z_stack[0]);
+				result = divide2_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case 'i':

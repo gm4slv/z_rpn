@@ -10,26 +10,36 @@ const float PI = 3.14159265359;
 struct z_number *divide2_z(struct z_number *z1, struct z_number *z2)
 {
 	struct z_number *result_ptr;
+	struct z_number *ptr;
 	struct z_number *z3;
-	int polar_in = 0;	
+	int polar_in_z1 = 0;	
+	int polar_in_z2 = 0;	
 	if(z1->polar)
 	{
 		z1 = polar_to_rect(z1);
-		polar_in = 1;
+		polar_in_z1 = 1;
 	}
 	if(z2->polar)
 	{
 		z2 = polar_to_rect(z2);
-		polar_in = 1;
+		polar_in_z2 = 1;
 	}
 
 	z3 = invert_z(z2);
 	
-	result_ptr = multiply_z(z1,z3);
-
-	if(polar_in)
-		result_ptr = rect_to_polar(result_ptr);
-
+	if(polar_in_z1 == 0 && polar_in_z2 == 0)
+		result_ptr = multiply_z(z1,z3);
+	else
+	{
+		ptr = multiply_z(z1,z3);
+		if(polar_in_z1)
+			free(z1);
+		if(polar_in_z2)
+			free(z2);
+		result_ptr = rect_to_polar(ptr);
+		free(ptr);
+	}
+	
 	free(z3);
 
 	return(result_ptr);
@@ -52,80 +62,49 @@ struct z_number *invert_z(struct z_number *z1)
 		z1 = polar_to_rect(z1);
 
 		polar_in = 1;
-
+	}
 	
 	/*  make the signed version of real & imaginary parts
          *  of z1 and z1 to allow the calculation to be made */
 
         /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
+    if( z1->sign_zre[0] == '-')
+    {
+        z1_re = z1->abs_zre * -1;
+    }
+    else
+    {
+            z1_re = z1->abs_zre;
+    }
 
 
-        /* Imaginary parts */
+    /* Imaginary parts */
 
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim;
-        }
-        else
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-		
-		free(z1);
-	}
-	else
-	{
-	/*  make the signed version of real & imaginary parts
-         *  of z1 and z1 to allow the calculation to be made */
-
-        /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
-
-
-        /* Imaginary parts */
-
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim;
-        }
-        else
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-		
-	}
+    if( z1->sign_zim[0] == '-')
+    {
+        z1_im = z1->abs_zim;
+    }
+    else
+    {
+        z1_im = z1->abs_zim * -1;
+    }
 		
  /* calculate the real and imaginary result */
-        result_re = (z1_re / (z1_re * z1_re + z1_im * z1_im) ) ;
-        result_im = ( z1_im /( z1_re * z1_re + z1_im * z1_im)) ;
+    result_re = (z1_re / (z1_re * z1_re + z1_im * z1_im) ) ;
+    result_im = ( z1_im /( z1_re * z1_re + z1_im * z1_im)) ;
 
         /* send the real and imaginary results to 
          * make_z() and assign the returned pointer
          * to the result struct */
-		if(!polar_in)
-        	result_ptr = make_z(result_re, result_im, 0);
-		else
-		{
-			ptr = make_z(result_re, result_im,0);
-			result_ptr = rect_to_polar(ptr);
-			
-			free(ptr);
-		}
+	if(!polar_in)
+      	result_ptr = make_z(result_re, result_im, 0);
+	else
+	{
+		ptr = make_z(result_re, result_im,0);
+		result_ptr = rect_to_polar(ptr);
+		free(z1);		
+		free(ptr);
+	}
 
 
 	return(result_ptr);
@@ -262,77 +241,49 @@ struct z_number *conjugate_z(struct z_number *z1)
 		z1 = polar_to_rect(z1);
 		polar_in = 1;
 	
-	
+	}	
 	
 	/*  make the signed version of real & imaginary parts
          *  of z1 and z1 to allow the calculation to be made */
 
         /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
+    if( z1->sign_zre[0] == '-')
+    {
+        z1_re = z1->abs_zre * -1;
+    }
+    else
+    {
+        z1_re = z1->abs_zre;
+    }
 
 
-        /* Imaginary parts */
+    /* Imaginary parts */
 
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
+    if( z1->sign_zim[0] == '-')
+    {
+        z1_im = z1->abs_zim * -1;
+    }
+    else
+    {
+        z1_im = z1->abs_zim;
+    }
 
-		free(z1);
-	}
+ /* calculate the real and imaginary result */
+    result_re = z1_re ;
+    result_im = -1 * z1_im ;
+
+    /* send the real and imaginary results to 
+     * make_z() and assign the returned pointer
+     * to the result struct */
+	if(!polar_in)
+       	result_ptr = make_z(result_re, result_im, 0);
 	else
 	{
-	/*  make the signed version of real & imaginary parts
-         *  of z1 and z1 to allow the calculation to be made */
-
-        /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
-
-
-        /* Imaginary parts */
-
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
+		ptr = make_z(result_re, result_im, 0);
+		result_ptr = rect_to_polar(ptr);
+		free(z1);
+		free(ptr);
 	}
- /* calculate the real and imaginary result */
-        result_re = z1_re ;
-        result_im = -1 * z1_im ;
-
-        /* send the real and imaginary results to 
-         * make_z() and assign the returned pointer
-         * to the result struct */
-		if(!polar_in)
-        	result_ptr = make_z(result_re, result_im, 0);
-		else
-		{
-			ptr = make_z(result_re, result_im, 0);
-			result_ptr = rect_to_polar(ptr);
-			free(ptr);
-		}
 
 	return(result_ptr);
 }
@@ -485,10 +436,6 @@ struct z_number *uvec_z(struct z_number *z1)
 }
 
 
-
-
-
-
 struct z_number *add_z(struct z_number *z1, struct z_number *z2)
 {
 	struct z_number *result_ptr;
@@ -499,7 +446,8 @@ struct z_number *add_z(struct z_number *z1, struct z_number *z2)
 	float z1_im; /*  made by reference to the z->sign... char       */
 	float z2_re; /*  multiplying the z->abs_xxx by -1 when the      */
 	float z2_im; /*  sign member character  is '-'                  */
-	int polar_in = 0;
+	int polar_in_z1 = 0;
+	int polar_in_z2 = 0;
 	
 	/*  make the signed version of real & imaginary parts
          *  of z1 and z1 to allow the calculation to be made */
@@ -508,125 +456,79 @@ struct z_number *add_z(struct z_number *z1, struct z_number *z2)
 	if(z1->polar)
 	{
 		z1 = polar_to_rect(z1);
-		polar_in = 1;
-	
+		polar_in_z1 = 1;
+	}	
 
         /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
+    if( z1->sign_zre[0] == '-')
+    {
+        z1_re = z1->abs_zre * -1;
+    }
+    else
+    {
+        z1_re = z1->abs_zre;
+    }
 
 
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
-
-		free(z1);
-
-	}
-	else
-	{
-        /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
+    if( z1->sign_zim[0] == '-')
+    {
+        z1_im = z1->abs_zim * -1;
+    }
+    else
+    {
+        z1_im = z1->abs_zim;
+    }
 
 
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
-
-	}
-
-/******************************************************/
+/****************** z2   ************************************/
 
 
 	if(z2->polar)
 	{
 		z2 = polar_to_rect(z2);
-		polar_in = 1;
-	
-
-        if( z2->sign_zre[0] == '-')
-        {
-                z2_re = z2->abs_zre * -1;
-        }
-        else
-        {
-                z2_re = z2->abs_zre;
-        }
-
-        /* Imaginary parts */
-
-        if( z2->sign_zim[0] == '-')
-        {
-                z2_im = z2->abs_zim * -1;
-        }
-        else
-        {
-                z2_im = z2->abs_zim;
-        }
-		free(z2);
-
+		polar_in_z2 = 1;
 	}
-	else
-	{
-        if( z2->sign_zre[0] == '-')
-        {
-                z2_re = z2->abs_zre * -1;
-        }
-        else
-        {
-                z2_re = z2->abs_zre;
-        }
 
-        /* Imaginary parts */
+    if( z2->sign_zre[0] == '-')
+    {
+        z2_re = z2->abs_zre * -1;
+    }
+    else
+    {
+        z2_re = z2->abs_zre;
+    }
 
-        if( z2->sign_zim[0] == '-')
-        {
-                z2_im = z2->abs_zim * -1;
-        }
-        else
-        {
-                z2_im = z2->abs_zim;
-        }
-	}
+    /* Imaginary parts */
+
+    if( z2->sign_zim[0] == '-')
+    {
+        z2_im = z2->abs_zim * -1;
+    }
+    else
+    {
+        z2_im = z2->abs_zim;
+    }
+
 
  /* calculate the real and imaginary result */
-        result_re = z1_re + z2_re;
-        result_im = z1_im + z2_im;
+    result_re = z1_re + z2_re;
+    result_im = z1_im + z2_im;
 
-        /* send the real and imaginary results to 
-         * make_z() and assign the returned pointer
-         * to the result struct */
+    /* send the real and imaginary results to 
+     * make_z() and assign the returned pointer
+     * to the result struct */
 
-		if(!polar_in)
-        	result_ptr = make_z(result_re, result_im, 0);
-		else
-		{
-			ptr = make_z(result_re, result_im,0);
-			result_ptr = rect_to_polar(ptr);
-			free(ptr);
+	if(polar_in_z1 == 0 && polar_in_z2 == 0)
+       	result_ptr = make_z(result_re, result_im, 0);
+	else
+	{
+		ptr = make_z(result_re, result_im,0);
+		result_ptr = rect_to_polar(ptr);
+		if(polar_in_z1)
+			free(z1);
+		if(polar_in_z2)
+			free(z2);
+		free(ptr);
 		}
 	
 	return(result_ptr);
@@ -644,7 +546,8 @@ struct z_number *subtract_z(struct z_number *z1, struct z_number *z2)
 	float z1_im; /*  made by reference to the z->sign... char       */
 	float z2_re; /*  multiplying the z->abs_xxx by -1 when the      */
 	float z2_im; /*  sign member character  is '-'                  */
-	int polar_in = 0;
+	int polar_in_z1 = 0;
+	int polar_in_z2 = 0;
 	
 	/*  make the signed version of real & imaginary parts
          *  of z1 and z1 to allow the calculation to be made */
@@ -653,55 +556,30 @@ struct z_number *subtract_z(struct z_number *z1, struct z_number *z2)
 	if(z1->polar)
 	{
 		z1 = polar_to_rect(z1);
-		polar_in = 1;
-	
+		polar_in_z1 = 1;
+	}	
 
         /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
+    if( z1->sign_zre[0] == '-')
+    {
+        z1_re = z1->abs_zre * -1;
+    }
+    else
+    {
+        z1_re = z1->abs_zre;
+    }
 
 
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
-
-		free(z1);
-
-	}
-	else
-	{
-        /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
+    if( z1->sign_zim[0] == '-')
+    {
+        z1_im = z1->abs_zim * -1;
+    }
+    else
+    {
+        z1_im = z1->abs_zim;
+    }
 
 
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
-
-	}
 
 /******************************************************/
 
@@ -709,70 +587,50 @@ struct z_number *subtract_z(struct z_number *z1, struct z_number *z2)
 	if(z2->polar)
 	{
 		z2 = polar_to_rect(z2);
-		polar_in = 1;
-	
-
-        if( z2->sign_zre[0] == '-')
-        {
-                z2_re = z2->abs_zre * -1;
-        }
-        else
-        {
-                z2_re = z2->abs_zre;
-        }
-
-        /* Imaginary parts */
-
-        if( z2->sign_zim[0] == '-')
-        {
-                z2_im = z2->abs_zim * -1;
-        }
-        else
-        {
-                z2_im = z2->abs_zim;
-        }
-		free(z2);
-
+		polar_in_z2 = 1;
 	}
-	else
-	{
-        if( z2->sign_zre[0] == '-')
-        {
-                z2_re = z2->abs_zre * -1;
-        }
-        else
-        {
-                z2_re = z2->abs_zre;
-        }
 
-        /* Imaginary parts */
+    if( z2->sign_zre[0] == '-')
+    {
+        z2_re = z2->abs_zre * -1;
+    }
+    else
+    {
+        z2_re = z2->abs_zre;
+    }
 
-        if( z2->sign_zim[0] == '-')
-        {
-                z2_im = z2->abs_zim * -1;
-        }
-        else
-        {
-                z2_im = z2->abs_zim;
-        }
-	}
+    /* Imaginary parts */
+
+    if( z2->sign_zim[0] == '-')
+    {
+        z2_im = z2->abs_zim * -1;
+    }
+    else
+    {
+        z2_im = z2->abs_zim;
+    }
+
 
  /* calculate the real and imaginary result */
-        result_re = z1_re - z2_re;
-        result_im = z1_im - z2_im;
+    result_re = z1_re - z2_re;
+    result_im = z1_im - z2_im;
 
-        /* send the real and imaginary results to 
-         * make_z() and assign the returned pointer
-         * to the result struct */
+    /* send the real and imaginary results to 
+     * make_z() and assign the returned pointer
+     * to the result struct */
 
-		if(!polar_in)
-        	result_ptr = make_z(result_re, result_im, 0);
-		else
-		{
-			ptr = make_z(result_re, result_im,0);
-			result_ptr = rect_to_polar(ptr);
-			free(ptr);
-		}
+	if(polar_in_z1 == 0 && polar_in_z2 == 0)
+       	result_ptr = make_z(result_re, result_im, 0);
+	else
+	{
+		ptr = make_z(result_re, result_im,0);
+		if(polar_in_z1)
+			free(z1);
+		if(polar_in_z2)
+			free(z2);
+		result_ptr = rect_to_polar(ptr);
+		free(ptr);
+	}
 	
 	return(result_ptr);
 }
@@ -940,7 +798,8 @@ struct z_number *multiply_z(struct z_number *z1, struct z_number *z2)
 	float z1_im; /*  made by reference to the z->sign... char       */
 	float z2_re; /*  multiplying the z->abs_xxx by -1 when the      */
 	float z2_im; /*  sign member character  is '-'                  */
-	int polar_in = 0;
+	int polar_in_z1 = 0;
+	int polar_in_z2 = 0;
 	
 	/*  make the signed version of real & imaginary parts
          *  of z1 and z1 to allow the calculation to be made */
@@ -949,55 +808,29 @@ struct z_number *multiply_z(struct z_number *z1, struct z_number *z2)
 	if(z1->polar)
 	{
 		z1 = polar_to_rect(z1);
-		polar_in = 1;
-	
+		polar_in_z1 = 1;
+	}
 
         /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
+    if( z1->sign_zre[0] == '-')
+    {
+        z1_re = z1->abs_zre * -1;
+    }
+    else
+    {
+        z1_re = z1->abs_zre;
+    }
 
 
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
+    if( z1->sign_zim[0] == '-')
+    {
+        z1_im = z1->abs_zim * -1;
+    }
+    else
+    {
+        z1_im = z1->abs_zim;
+    }
 
-		free(z1);
-
-	}
-	else
-	{
-        /* real parts */
-        if( z1->sign_zre[0] == '-')
-        {
-                z1_re = z1->abs_zre * -1;
-        }
-        else
-        {
-                z1_re = z1->abs_zre;
-        }
-
-
-        if( z1->sign_zim[0] == '-')
-        {
-                z1_im = z1->abs_zim * -1;
-        }
-        else
-        {
-                z1_im = z1->abs_zim;
-        }
-
-	}
 
 /******************************************************/
 
@@ -1005,70 +838,50 @@ struct z_number *multiply_z(struct z_number *z1, struct z_number *z2)
 	if(z2->polar)
 	{
 		z2 = polar_to_rect(z2);
-		polar_in = 1;
-	
-
-        if( z2->sign_zre[0] == '-')
-        {
-                z2_re = z2->abs_zre * -1;
-        }
-        else
-        {
-                z2_re = z2->abs_zre;
-        }
-
-        /* Imaginary parts */
-
-        if( z2->sign_zim[0] == '-')
-        {
-                z2_im = z2->abs_zim * -1;
-        }
-        else
-        {
-                z2_im = z2->abs_zim;
-        }
-		free(z2);
-
+		polar_in_z2 = 1;
 	}
-	else
-	{
-        if( z2->sign_zre[0] == '-')
-        {
-                z2_re = z2->abs_zre * -1;
-        }
-        else
-        {
-                z2_re = z2->abs_zre;
-        }
 
-        /* Imaginary parts */
+    if( z2->sign_zre[0] == '-')
+    {
+        z2_re = z2->abs_zre * -1;
+    }
+    else
+    {
+        z2_re = z2->abs_zre;
+    }
 
-        if( z2->sign_zim[0] == '-')
-        {
-                z2_im = z2->abs_zim * -1;
-        }
-        else
-        {
-                z2_im = z2->abs_zim;
-        }
-	}
+    /* Imaginary parts */
+
+    if( z2->sign_zim[0] == '-')
+    {
+        z2_im = z2->abs_zim * -1;
+    }
+    else
+    {
+        z2_im = z2->abs_zim;
+    }
+
 
  /* calculate the real and imaginary result */
-        result_re = ((z1_re * z2_re) - (z1_im * z2_im));
-        result_im = ((z1_re * z2_im) + (z1_im * z2_re));
+    result_re = ((z1_re * z2_re) - (z1_im * z2_im));
+    result_im = ((z1_re * z2_im) + (z1_im * z2_re));
 
         /* send the real and imaginary results to 
          * make_z() and assign the returned pointer
          * to the result struct */
 
-		if(!polar_in)
-        	result_ptr = make_z(result_re, result_im, 0);
-		else
-		{
-			ptr = make_z(result_re, result_im,0);
-			result_ptr = rect_to_polar(ptr);
-			free(ptr);
-		}
+	if(polar_in_z1 == 0 && polar_in_z2 == 0)
+       	result_ptr = make_z(result_re, result_im, 0);
+	else
+	{
+		ptr = make_z(result_re, result_im,0);
+		if(polar_in_z1)
+			free(z1);
+		if(polar_in_z2)
+			free(z2);
+		result_ptr = rect_to_polar(ptr);
+		free(ptr);
+	}
 	
 	return(result_ptr);
 }
