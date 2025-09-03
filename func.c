@@ -61,29 +61,32 @@ void help(void)
 	printf("\n\tAt the \"Enter Real\" prompt type either:\n");
     printf("\tA command prefixed by the # sign\n");
 	printf("\t\tor\n");
-    printf("\ta number to put on the stack \n");
+    printf("\tbegin a number entry with real part <enter> imaginary part <enter> \n");
 
 	printf("\n\tFor number entry type:\n");
-    printf("\tthe number and press <Enter>\n");
-	printf("\tFor zero just press Enter\n");
-	printf("\tFor a complex number : \n");
+    printf("\tthe number and press <enter>\n");
+	printf("\tFor zero just press <enter>\n\n");
+	printf("\tAll numbers are treated as complex\n");
 	printf("\tat the \"Enter Imaginary:\" prompt enter the imaginary part.\n");
-	printf("\tFor zero just press Enter\n\n");
+	printf("\tFor zero just press <enter>\n\n");
 
 	printf("\tCommands are prefix by #: \n");
-	printf("\t\tAdd		#+\n");
-	printf("\t\tSubtract	#-\n");
-	printf("\t\tMultiply	#*\n");
-	printf("\t\tDivide		#/\n\n");
-	printf("\t\tInverse 1/z		#i\n");
-	printf("\t\tComplex Conjugate	#c\n");
-	printf("\t\tRect -> Polar		#p\n");
-	printf("\t\tPolar -> Rect		#r\n\n");
-	printf("\t\tRoll Down			#x\n");
-	printf("\t\tSwap X<>Y			#z\n\n");
+	printf("\t\tAdd\t\t#a\n");
+	printf("\t\tSubtract\t#s\n");
+	printf("\t\tMultiply\t#m\n");
+	printf("\t\tDivide\t\t#d\n\n");
+	printf("\t\tInverse 1/z\t#i\n");
+	printf("\t\tComplex Conj.\t#c\n\n");
+	printf("\t\tDot product\t#.\n");
+	printf("\t\tCross product\t#x\n");
+	printf("\t\tUnit Vector\t#u\n\n");
+	printf("\t\tRect -> Polar\t#p\n");
+	printf("\t\tPolar -> Rect\t#r\n\n");
+	printf("\t\tRoll Down\t#[\n");
+	printf("\t\tSwap X<>Y\t#]\n\n");
 
-	printf("\tThis HELP		#h\n");
-	printf("\tQuit			#q\n");
+	printf("\t\tThis HELP\t#h\n");
+	printf("\t\tQuit\t\t#q\n");
 
 
 

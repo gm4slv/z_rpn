@@ -392,20 +392,28 @@ int main(void)
 		switch (opcode)
 		{
 			case '+':
+			case 'a':
 				result = add_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case '-':
+			case 's':
 				result = subtract_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case '*':
+			case 'm':
 				result = multiply_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case '/':
+			case 'd':
 				result = divide2_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
+				break;
+			case '<':
+				result = clear_z();
+				drop_flag = 0;
 				break;
 			case '.':
 				result = dot_product(z_stack[1], z_stack[0]);
@@ -416,7 +424,6 @@ int main(void)
 				drop_flag = 1;
 				break;
 			case 'i':
-			case 'I':
 				result = invert_z(z_stack[0]);
 				drop_flag = 0;
 				break;
@@ -455,14 +462,14 @@ int main(void)
 				drop_flag = 0;
 				break;
 			
-			case 'z':									/* Swap x<>y */
+			case ']':									/* Swap x<>y */
 				swap_temp = z_stack[0];	
 				z_stack[0] = z_stack[1];
 				z_stack[1] = swap_temp;
 				null_flag = 1;								/* NULL flag - do nothing to the stack */
 				drop_flag = 0;
 				break;	
-			case 'a':									/* ROLL DOWN */
+			case '[':									/* ROLL DOWN */
 				swap_temp = z_stack[0];
 				for (i=0;i<SIZE-1;++i)
 				{
@@ -487,7 +494,7 @@ int main(void)
 															   copied into multiple stack levels
 															   free them as approriate
 															 */
-				for (x = SIZE-1;x>1;--x)
+				for (x = SIZE-1;x>0;--x)
 				{
 					if(z_stack[x] != z_stack[x-1])
 					{
@@ -495,8 +502,10 @@ int main(void)
 						free(z_stack[x]);
 					}
 				}
+				/*
 				printf("  Freeing stack[1] ....%p\n", z_stack[1]);
 				free(z_stack[1]);
+				*/
 				printf("  Freeing stack[0] ....%p\n", z_stack[0]);
 				free(z_stack[0]);
 				return(0);									/* Gracefully QUIT the program */
@@ -523,29 +532,6 @@ int main(void)
 		 * **********************************
 		 */
 
-		/* we test first for POLAR format 
-		 * if the flag is set we assign the various members of the z_stack[0] struct
-		 * with those from the results pointer. A POLAR number will assign a 1 to the struct's
-		 * polar member. 
-		 * This is used later to detect the format for display in show_stack() as well as
-		 * in the decision making in the switch-case.
-		 *
-		*/
-/*
-		if(polar_flag)
-		{
-				z_stack[0]->sign_zre[0] = result->sign_zre[0];
-				z_stack[0]->sign_zim[0] = result->sign_zim[0];;	
-				z_stack[0]->abs_zre = result->abs_zre;
-				z_stack[0]->abs_zim = result->abs_zim;
-				z_stack[0]->polar = 1;
-				free(result);	
-			
-		}
-
-*/
-		/* if this is a newly converted Polar number then drop_flag won't be set, and the the following is skipped
-		 * otherwise, in general it's done for most other cases */
 
 		if(drop_flag)
 		{
