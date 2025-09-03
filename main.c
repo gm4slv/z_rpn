@@ -72,12 +72,15 @@ int main(void)
 
 			printf("\nEnter Real (or #_ command) : ");
 			fgets(line, sizeof(line), stdin);
-			printf("strlen(line) = %d\n", strlen(line));
+/*			printf("strlen(line) = %d\n", strlen(line)); */
 			line[strlen(line)-1] = '\0';
-			printf("strlen(line) = %d\n", strlen(line));
+/*			printf("strlen(line) = %d\n", strlen(line)); */
 			
-			if(strlen(line) == 0)
-				real_null = 1;
+			if(strlen(line) == 0)   /* we just pressed ENTER */
+				real_null = 1;      /* set the flag to show this:
+									   we can't test later for "real == '\n'
+									   because a genuine entry of (float) 10
+									   is read later as the \n character */
 			else
 				real_null = 0;
 
@@ -100,15 +103,14 @@ int main(void)
 			 * */
 			else
 			{
-				if (line[0] == '\n')
+				if (line[0] == '\n')   /* IS THIS REDUNDANT ?? */ 
 				{
-					printf(" ASSIGNING real = \\n !!!!! \n");
 					real = '\n';
 				}
 				else if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &real);
-					printf(" real entered %f\n", real);
+/*					printf(" real entered %f\n", real);      */
 				}
 				else
 				{
@@ -117,30 +119,26 @@ int main(void)
 				polar_flag = 0;	
 			
 
-				/* test \n */
-
-				if(real == '\n')
-					printf("REAL = \\n %f !!!!! \n", real);
 
 
 				printf("Enter Imaginary : ");
 				fgets(line, sizeof(line), stdin);
 				line[strlen(line)-1] = '\0';
 				
-				if(strlen(line) == 0)
+				if(strlen(line) == 0)   /* test for an empty "enter" */
 					im_null = 1;
 				else
 					im_null = 0;
 
-				if (line[0] == '\n')
+				if (line[0] == '\n')     /* IS THIS REDUNDANT ?? */
 				{
-						printf(" ASSIGNING im = \\n !!!!! \n");
+/*						printf(" ASSIGNING im = \\n !!!!! \n"); */
 						im = '\n';
 				}
 				else if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &im);
-					printf(" imag entered %f\n", im);
+/*					printf(" imag entered %f\n", im);   */
 				}
 
 				
@@ -166,16 +164,12 @@ int main(void)
 
 					make_polar = 1;
 				}
-				else
+				else                /* IS THIS REDUNDANT ??? */
 				{
 					im = 0;
 				}	
 
 
-				/* test \n */
-
-				if(im == '\n')
-					printf("IM = \\n %f !!!!! \n", im);
 		
 			/**********************************
 			 *
@@ -269,8 +263,23 @@ int main(void)
 				 *
 				 */
 
-				printf(" after free(temp) real %f im %f \n", real, im);
-				if (real_null == 1 && im_null == 1)
+/*				printf(" after free(temp) real %f im %f \n", real, im);  */
+				if (real_null == 1 && im_null == 1)   /* BOTH REAL and IM are "empty"
+														 and we want to copy the existing
+														 stack[0] (x-reg) contents to our 
+														 new z_number before we do the usual 
+														 stack-raise.
+														 
+
+														 we test for the flags rather than
+														 directly for the \n character
+														 because an entry of 10 
+														 would be misinterpreted as
+														 \n (ASCII value for \n is decimal 10
+														 instead our input routine checks for
+														 an empty input string and sets the real_null
+														 or im_null flag. This prevents a false
+														 detection of \n when input is "10" */
 				{
 
 					real = z_stack[0]->abs_zre;
@@ -288,20 +297,23 @@ int main(void)
 					make_polar = z_stack[0]->polar;
 				
 					
-					printf(" after if real == \\n && im==\\n : real %f  im %f \n", real, im);
+/*					printf(" after if real == \\n && im==\\n : real %f  im %f \n", real, im); */
 
 				}
 				else      
 				{
-					if (real_null == 1)
+					if (real_null == 1)      /* if only one of either real or im are "empty"
+											   (but not BOTH, which is dealt with above)	
+											   we want to assign the relevant part the 
+											   value of "zero" */
 					{
-						printf(" real == \\n \n");
+/*						printf(" real == \\n \n"); */
 						real = 0;
 					}
 					if (im_null == 1)
 					{
 						im = 0;
-						printf(" im == \\n \n");
+/*						printf(" im == \\n \n"); */
 					}
 				}
 				
@@ -313,7 +325,7 @@ int main(void)
 				 *
 				 */
 
-				printf(".. going to make_z() with %f : %f : %d \n", real, im, make_polar);
+/*				printf(".. going to make_z() with %f : %f : %d \n", real, im, make_polar);  */
 				z_stack[0] = make_z(real, im, make_polar);
 				
 				/* this ++i is here in case we decide NOT to pre-fill the stack in the initialization
