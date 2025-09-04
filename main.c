@@ -13,7 +13,9 @@ int main(void)
 	int im_null = 0;
 
 	struct z_number *z_stack[SIZE];		/* the complex stack = holds pointers to the complex numbers */
-	
+
+	struct z_number *last_x;
+
 	struct z_number *result;			/* a pointer to the result of a calculation */
 	struct z_number *temp;				/* a temporary pointer to a potential free-able memory, after a stack-raise */
 	struct z_number *drop_temp;			/* a temporary pointer to a potential free-able membry, after a stack-drop  */
@@ -48,10 +50,12 @@ int main(void)
 
 	if (i > SIZE-1)
 		i = SIZE-1;
+	
+	last_x = make_lastx(z_stack[0]);
 
 	/* show_stack() is a function that takes the hase address of
 	 * the z_stack and iterates across each element */
-	show_stack(z_stack);
+	show_stack(z_stack, last_x);
 	
 
 	/* start the endless process */
@@ -171,7 +175,7 @@ int main(void)
 		
 				polar_flag = 0;	
 					
-				show_stack(z_stack);
+				show_stack(z_stack, last_x);
 		
 			}
 		}	    /* the WHILE() loop spins, looking for more user input */
@@ -216,21 +220,29 @@ int main(void)
 		{
 			case '+':
 			case 'a':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = add_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case '-':
 			case 's':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = subtract_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case '*':
 			case 'm':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = multiply_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case '/':
 			case 'd':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = divide2_z(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
@@ -239,10 +251,14 @@ int main(void)
 				drop_flag = 0;
 				break;
 			case '.':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = dot_product(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
 			case 'x':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = cross_product(z_stack[1], z_stack[0]);
 				drop_flag = 1;
 				break;
@@ -327,12 +343,20 @@ int main(void)
 				{
 					if(z_stack[x] != z_stack[x-1])
 					{
-	/*					printf("  Freeing stack[%d] ....%p \n", x, z_stack[x]); */
+				/*		printf("  Freeing stack[%d] ....%p \n", x, z_stack[x]); */
 						free(z_stack[x]);
 					}
 				}
-	/*			printf("  Freeing stack[0] ....%p\n", z_stack[0]); */
+				/*
+				printf("  Freeing stack[1] ....%p\n", z_stack[1]);
+				free(z_stack[1]);
+				*/
+				
+			/*	printf("  Freeing stack[0] ....%p\n", z_stack[0]); */
 				free(z_stack[0]);
+			/*	printf("....freeing last_x .... %p\n", last_x); */
+				free(last_x);
+
 				return(0);									/* Gracefully QUIT the program */
 
 			default:
@@ -383,6 +407,9 @@ int main(void)
 
 				/* the results pointer is now un-needed and can be free'd */
 		//		printf("In drop.... freeing result %p\n", result);
+				
+		
+
 				free(result);	
 				
 				/* we check the pointer from the old "y" stack level with the one above
@@ -416,6 +443,7 @@ int main(void)
 								 * where we don't drop, but the polar flag is unset */
 			else
 			{
+				printf("drop = 0 ...else.....\n\n");
 				z_stack[0]->sign_zre[0] = result->sign_zre[0];
 				z_stack[0]->sign_zim[0] = result->sign_zim[0];	
 				z_stack[0]->abs_zre = result->abs_zre;
@@ -426,8 +454,9 @@ int main(void)
 					z_stack[0]->polar = 1;
 				
 				if(result != z_stack[0])
+				{
 					free(result);
-
+				}
 			}
 		}
 		
@@ -437,7 +466,7 @@ int main(void)
 		 *
 		 ***************************************/
 
-		show_stack(z_stack);
+		show_stack(z_stack, last_x);
 
 		}  		/* the INNER while() loop spins */
     return 0;

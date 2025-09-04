@@ -1,5 +1,5 @@
-SRCS = main.c z_math.c func.c stack_raise.c
-OBJS = main.o z_math.o func.o stack_raise.o
+SRCS = main.c z_math.c func.c stack_raise.c make_lastx.c
+OBJS = main.o z_math.o func.o stack_raise.o make_lastx.o
 BIN 	  = zrpn
 CC_FLAGS =  -ansi -Wall -pedantic
 CC = gcc

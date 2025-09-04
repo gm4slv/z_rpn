@@ -3,7 +3,7 @@
 
 
 
-void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stack variable is passed in
+void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointer-to-pointer - the z_stack variable is passed in
 										 which is a pointer to the pointer members of the stack array
 										 which themselves hold pointers to the z_number struct locations.*/
 {
@@ -16,22 +16,20 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 
 	for (x=SIZE-1;x>=0;--x)
 	{
-
 		if(p[x]->polar == 1) /* check the "polar" member of the z_stack pointer being handled
 								and if set we assign @ as an identifier of POLAR format
 								and if unset we print a space */
 			polar_char = '@';
 		else
 			polar_char = ' ';
-		
-		/* print the members of the stack pointer's z_number struct  (we do down from top
-		 * to ""y" in one block */
-		
-		if( x == 1)
+
+
+		if(x == 1)
 			printf("\n");
 
-
-    	printf(" z[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
+		/* print the members of the stack pointer's z_number struct  (we do down from top
+		 * to ""y" in one block */
+    	printf(" z[%0d]\t\t\t%c%.3f %c %c%.3f j \n",
     /*	printf("z_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
 		/*	x,&p[x],*(&p[x]), */
 			x, 
@@ -41,6 +39,19 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 	}
 
 
+		/* then space down and do the bottom "X" stack level on a line to itself. This is where our
+		 * main result is shown */
+
+		if(last_x->polar == 1)
+			polar_char = '@';
+		else
+			polar_char = ' ';
+
+		printf("\nlast_x\t\t%c%.3f %c %c%.3f j \n", 
+			last_x->sign_zre[0], last_x->abs_zre,
+			polar_char,
+			last_x->sign_zim[0], last_x->abs_zim);
+			
 }
 
 
