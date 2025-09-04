@@ -9,3 +9,47 @@ structs and pointers and memory management.
 It's a steep learning curve!
 
 
+
+
+4/9/25
+-------------------------------------------
+
+Features so far:
+================
+
+stack : enter real & imaginary (rect)
+stack : enter magnitude & angle (polar)
+
+each number on the stack can be in polar or rect. without forcing all
+stack level to follow the same format.
+
+stack: roll-down
+stack: swap x<>y
+
+calculation between two rect. format numbers -> result in rect.
+calculation between two polar format numbersr -> result in polar
+
+calculation between one polar and one rect. format number -> result in polar.
+
+arithmetical functions:
+------------------------
+
+add
+subtract
+multiply
+divide
+
+invert
+complex conjugate
+
+rect->polar
+polar->rect
+
+unit vector
+
+dot product
+cross product
+
+
+
+
