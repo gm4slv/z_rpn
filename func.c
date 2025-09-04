@@ -14,8 +14,9 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 
 	printf("\n\n==================...z rpn.%s....==================\n\n", VERSION);
 
-	for (x=SIZE-1;x>=1;--x)
+	for (x=SIZE-1;x>=0;--x)
 	{
+
 		if(p[x]->polar == 1) /* check the "polar" member of the z_stack pointer being handled
 								and if set we assign @ as an identifier of POLAR format
 								and if unset we print a space */
@@ -25,7 +26,12 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 		
 		/* print the members of the stack pointer's z_number struct  (we do down from top
 		 * to ""y" in one block */
-    	printf("z_stack[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
+		
+		if( x == 1)
+			printf("\n");
+
+
+    	printf(" z[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
     /*	printf("z_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
 		/*	x,&p[x],*(&p[x]), */
 			x, 
@@ -35,20 +41,6 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 	}
 
 
-		/* then space down and do the bottom "X" stack level on a line to itself. This is where our
-		 * main result is shown */
-
-		if(p[0]->polar == 1)
-			polar_char = '@';
-		else
-			polar_char = ' ';
-    		printf("\nz_stack[%0d]\t\t\t%c%.3f %c %c%.3f j \n", 
-    	/*	printf("\nz_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
-			x, 
-		/*	x,&p[0],*(&p[0]), */
-			p[0]->sign_zre[0], p[0]->abs_zre,
-			polar_char,
-			p[0]->sign_zim[0], p[0]->abs_zim);
 }
 
 

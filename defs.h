@@ -3,8 +3,8 @@
 #include <string.h>
 #include <math.h>
 
-#define SIZE 10
-#define VERSION "v0.1"
+#define SIZE 12
+#define VERSION "v0.2"
 
 struct z_number {
 	char sign_zre[1];

@@ -327,15 +327,11 @@ int main(void)
 				{
 					if(z_stack[x] != z_stack[x-1])
 					{
-						printf("  Freeing stack[%d] ....%p \n", x, z_stack[x]);
+	/*					printf("  Freeing stack[%d] ....%p \n", x, z_stack[x]); */
 						free(z_stack[x]);
 					}
 				}
-				/*
-				printf("  Freeing stack[1] ....%p\n", z_stack[1]);
-				free(z_stack[1]);
-				*/
-				printf("  Freeing stack[0] ....%p\n", z_stack[0]);
+	/*			printf("  Freeing stack[0] ....%p\n", z_stack[0]); */
 				free(z_stack[0]);
 				return(0);									/* Gracefully QUIT the program */
 
