@@ -12,7 +12,7 @@ void show_stack(struct z_number **p)  /* takes a pointer-to-pointer - the z_stac
 
 	polar_char = ' ';
 
-	printf("\n\n==================...z rpn.....==================\n\n");
+	printf("\n\n==================...z rpn.%s....==================\n\n", VERSION);
 
 	for (x=SIZE-1;x>=1;--x)
 	{
