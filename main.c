@@ -1,8 +1,6 @@
 #include "defs.h"
 
 
-void show_stack(struct z_number **p);
-void help(void);
 
 int main(void)
 {
@@ -169,183 +167,8 @@ int main(void)
 					im = 0;
 				}	
 
-
+				stack_raise(z_stack, real, real_null, im, im_null, make_polar, a, i);
 		
-			/**********************************
-			 *
-			 * STACK RAISE
-			 *
-			 * ********************************/
-				
-				
-				/*****************************************************
-				 *
-				 *  we take the existing members of the z_stack and push them upwards	
-				 *  starting at the top of the stack pulling each value up from below
-				 *  
-				 *  when we reach the bottom of the stack we create a new z_number
-				 *  struct by calling 
-				 *
-				 *  make_z(real, im, polar) 
-				 *  
-				 *  and put the returned pointer to it into z_stack[0]
-				 *	
-				 *	memory is handled by noting pointer held at the top level of the stack (before
-				 *	it's lifted) and storing it in a temp pointer.
-				 *
-				 *	If the pointer temp is the same as the pointer in the top level
-				 *	of the stack we can't free the memory at that location, as it's
-				 *	currently needed in active use on the stack. This situation occurs
-				 *	due to the stack dropping (and copying the top level into the one below
-				 *	and again each time it drops). Further raises from new user input
-				 *	will push the stack upwards, and eventually the top level will be pushed
-				 *	off and "temp" will be unique (not the same as the values on the stack.
-				 *
-				 *  When it's dectected that the value pushed off the top is not in use
-				 *  on the stack we can free() this.
-				 *
-				 *  A similar mechanism is used during DROP.
-				 *
-				 */
-				
-				a=i;
-
-				temp = z_stack[SIZE-1];		/* prior to raising the stack we record the curent TOP pointer */ 
-
-			//	printf("&z_stack[%d] = %p *(&z_stack[%d] = %p temp = %p \n", a, &z_stack[a], a, *(&z_stack[a]), temp);
-				while(a>0)
-				
-				
-				{	
-					/* we iterate down through the stack moving each value up one level */
-			//		printf("in raise while() a = %d, i = %d \n", a,i);
-
-					z_stack[a] = z_stack[a-1];
-					--a;								/* a counts down from "top of the stack" to 1 */
-					
-			//		printf("&z_stack[%d] = %p *(&z_stack[%d] = %p &temp = %p, *(&temp) = %p \n", a, &z_stack[a], a, *(&z_stack[a]), &temp, *(&temp));
-				}
-
-				/* we test the pointer of the previous top of the stack to see if the same pointer is still on the
-				 * stack. 
-				 *
-				 * If it IS we can't free() 
-				 *
-				 * If it isn't, and we've got "fresh" data on the stack, right to the top, we CAN free the memory pointed to 
-				 * by temp
-				 *
-				 */
-
-				if(temp == z_stack[SIZE-1])
-					;		
-		/*			printf("Can't free temp %p\n", temp); */
-				else
-				{
-		/*			printf("CAN free temp %p\n", temp); */
-					free(temp);
-					temp = NULL;
-				}
-
-				/*
-				 *	we've moved everything up by one, and removed the old top of the stack (and possibly
-				 *	free'd it's memory)
-				 *
-				 *	now we make a new z_number struct and get a pointer
-				 *
-				 * first we handle the signs of real and imaginary (the struct stores the 
-				 * absolute value as an int and the sign as a char
-				 *
-				 * it also stores an int to indicate if this is a POLAR value. If so then 
-				 * real is the magnitude and im is the angle of the POLAR. The struct member
-				 *
-				 *  ->polar  is 1 for POLAR and 0 for RECT
-				 *
-				 *
-				 */
-
-/*				printf(" after free(temp) real %f im %f \n", real, im);  */
-				if (real_null == 1 && im_null == 1)   /* BOTH REAL and IM are "empty"
-														 and we want to copy the existing
-														 stack[0] (x-reg) contents to our 
-														 new z_number before we do the usual 
-														 stack-raise.
-														 
-
-														 we test for the flags rather than
-														 directly for the \n character
-														 because an entry of 10 
-														 would be misinterpreted as
-														 \n (ASCII value for \n is decimal 10
-														 instead our input routine checks for
-														 an empty input string and sets the real_null
-														 or im_null flag. This prevents a false
-														 detection of \n when input is "10" */
-				{
-
-					real = z_stack[0]->abs_zre;
-					if(z_stack[0]->sign_zre[0] == '-')
-					{
-						real = -1*real;
-					}
-
-
-					im = z_stack[0]->abs_zim;
-					if(z_stack[0]->sign_zim[0] == '-')
-					{
-						im = -1*im;
-					}
-					make_polar = z_stack[0]->polar;
-				
-					
-/*					printf(" after if real == \\n && im==\\n : real %f  im %f \n", real, im); */
-
-				}
-				else      
-				{
-					if (real_null == 1)      /* if only one of either real or im are "empty"
-											   (but not BOTH, which is dealt with above)	
-											   we want to assign the relevant part the 
-											   value of "zero" */
-					{
-/*						printf(" real == \\n \n"); */
-						real = 0;
-					}
-					if (im_null == 1)
-					{
-						im = 0;
-/*						printf(" im == \\n \n"); */
-					}
-				}
-				
-				
-				/**********************************************
-				 *
-				 * 	we make a new struct, and assign the returned pointer to 
-				 * 	the lowest stack level z_stack[0]
-				 *
-				 */
-
-/*				printf(".. going to make_z() with %f : %f : %d \n", real, im, make_polar);  */
-				z_stack[0] = make_z(real, im, make_polar);
-				
-				/* this ++i is here in case we decide NOT to pre-fill the stack in the initialization
-				 * 
-				 * if this is changed we might build the stack one user entry at a time, and
-				 * "i" keeps track of where the current top of stack is
-				 * */
-
-				++i;
-				
-				/*  i can't grow beyond the top of the allowed stack (set in the #define SIZE macro in defs.h */
-
-				if(i > SIZE-1)
-					i = SIZE - 1;
-
-			/********************
-			 * 
-			 * print stack after raise
-			 *
-			 * **************************/
 				polar_flag = 0;	
 					
 				show_stack(z_stack);
@@ -441,11 +264,17 @@ int main(void)
 															   funtion. the result is a pointer to the 
 															   new z_number which holds the mag/angle (and its sign
 															   along with a POLAR flag */
+				{
+					printf("Goint to rect_to_polar\n");
 					result = rect_to_polar(z_stack[0]);
-				
+				}
 				else
-					result=z_stack[0];						/* other wise, were' already POLAR and we copy the 
-															   pointer of the existing z_number into the result
+				{
+					printf("Already polar! \n");
+					result=z_stack[0];
+				}			
+													/* other wise, were' already POLAR and we copy the 
+														   pointer of the existing z_number into the result
 															   pointer.*/
 				polar_flag = 1;								/* we set a flag to show we've got a POLAR number
 															   which is used later to format the display */
@@ -600,7 +429,8 @@ int main(void)
 				else
 					z_stack[0]->polar = 1;
 				
-				free(result);
+				if(result != z_stack[0])
+					free(result);
 
 			}
 		}

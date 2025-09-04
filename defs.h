@@ -49,6 +49,7 @@ struct z_number *uvec_z(struct z_number *z1);
 
 struct z_number *clear_z(void);
 
+void stack_raise(struct z_number **p, float real,int real_null, float im, int im_null, int make_polar, int a, int i);
 
 void show_stack(struct z_number **p);
 
