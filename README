@@ -34,6 +34,8 @@ calculation between two polar format numbersr -> result in polar
 
 calculation between one polar and one rect. format number -> result in polar.
 
+stack and last_x state are saved at exit and restored at start
+
 arithmetical functions:
 ------------------------
 
