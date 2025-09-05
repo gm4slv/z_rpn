@@ -329,6 +329,12 @@ int main(void)
 				result = uvec_z(z_stack[0]);
 				drop_flag = 0;
 				break;
+
+			case 'l':
+				push_lastx(z_stack, last_x);
+				drop_flag = 0;
+				null_flag = 1;
+				break;
 			case 'h':										/* a rudimentary HELP feature...... */
 				help();
 				drop_flag = 0;
