@@ -14,7 +14,7 @@ int main(void)
 
 	struct z_number *z_stack[SIZE];		/* the complex stack = holds pointers to the complex numbers */
 
-	struct z_number *last_x;
+	struct z_number *last_x;			/* a pointer to the last-x */
 
 	struct z_number *result;			/* a pointer to the result of a calculation */
 	struct z_number *temp;				/* a temporary pointer to a potential free-able memory, after a stack-raise */
@@ -24,11 +24,15 @@ int main(void)
 	float im;							/* input imaginary value */
 	
 	char opcode;						/* the requested arithmetic function (+ - * / r p i c) */ 
-	int drop_flag;
+	int drop_flag;						/* a flag to control */
 	int polar_flag=0;					/* a flag indicating we're displaying a polar-format number, to control the
 										   display of @ */
-	int null_flag = 0;					/* a flag to do an NOP on the stack following an un-recognizable user entry */
+
+	int null_flag = 0;					/* a flag to do an NOP on the stack following an un-recognizable user entry 
+										   or recall of last-x to the stack */
+	
 	char line[20];						/* a char-string to hold the user input prior to parsing */
+	
 	int make_polar;						/* a flag to send to make_z() when the user enters an imaginary part prefixed by @ 
 										   to indicate a polar format input */
 
@@ -52,6 +56,10 @@ int main(void)
 		i = SIZE-1;
 	
 	last_x = make_lastx(z_stack[0]);
+	
+	/* READ SAVED STATE */
+
+	read_state(z_stack, last_x);
 
 	/* show_stack() is a function that takes the hase address of
 	 * the z_stack and iterates across each element */
@@ -348,7 +356,9 @@ int main(void)
 			case 'Q':										/* clean up  - find which pointers are "unique" and not
 															   copied into multiple stack levels
 															   free them as approriate
-															 */
+																 */
+				save_state(z_stack,last_x);
+
 				for (x = SIZE-1;x>0;--x)
 				{
 					if(z_stack[x] != z_stack[x-1])

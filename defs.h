@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define SIZE 10
-#define VERSION "v0.3"
+#define VERSION "v0.4"
 
 struct z_number {
 	char sign_zre[1];
@@ -56,6 +56,9 @@ struct z_number *make_lastx(struct z_number *x);
 void push_lastx(struct z_number **stack, struct z_number *lastx);
 
 void show_stack(struct z_number **p, struct z_number *last_x);
+
+void save_state(struct z_number **state, struct z_number *lastx);
+void read_state(struct z_number **state, struct z_number *lastx);
 
 void help(void);
 

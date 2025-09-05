@@ -29,10 +29,10 @@ void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointe
 
 		/* print the members of the stack pointer's z_number struct  (we do down from top
 		 * to ""y" in one block */
-    	printf(" z[%0d]\t\t\t%c%.3f %c %c%.3f j \n",
+    	printf(" %0d:\t\t%c%.3f %c %c%.3f j \n",
     /*	printf("z_stack[%0d]\t&z_stack %p\t*(&z_stack) %p\t%c%.3f %c %c%.3f j \n", */
 		/*	x,&p[x],*(&p[x]), */
-			x, 
+			x+1, 
 			p[x]->sign_zre[0], p[x]->abs_zre,
 			polar_char,
 			p[x]->sign_zim[0], p[x]->abs_zim);
@@ -47,7 +47,8 @@ void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointe
 		else
 			polar_char = ' ';
 
-		printf("\nlast_x\t\t%c%.3f %c %c%.3f j \n", 
+		printf("\n------------------------------------------------------\n");
+		printf("last_x\t\t%c%.3f %c %c%.3f j \n", 
 			last_x->sign_zre[0], last_x->abs_zre,
 			polar_char,
 			last_x->sign_zim[0], last_x->abs_zim);
