@@ -263,6 +263,8 @@ int main(void)
 				drop_flag = 1;
 				break;
 			case 'i':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = invert_z(z_stack[0]);
 				drop_flag = 0;
 				break;
@@ -326,6 +328,8 @@ int main(void)
 				drop_flag = 0;
 				break;	
 			case 'u':
+				free(last_x);
+				last_x = make_lastx(z_stack[0]);
 				result = uvec_z(z_stack[0]);
 				drop_flag = 0;
 				break;
@@ -449,7 +453,6 @@ int main(void)
 								 * where we don't drop, but the polar flag is unset */
 			else
 			{
-				printf("drop = 0 ...else.....\n\n");
 				z_stack[0]->sign_zre[0] = result->sign_zre[0];
 				z_stack[0]->sign_zim[0] = result->sign_zim[0];	
 				z_stack[0]->abs_zre = result->abs_zre;
