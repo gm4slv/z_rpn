@@ -11,7 +11,7 @@ It's a steep learning curve!
 
 
 
-4/9/25
+5/9/25
 -------------------------------------------
 
 Features so far:
@@ -25,6 +25,9 @@ stack level to follow the same format.
 
 stack: roll-down
 stack: swap x<>y
+
+last x : stored after a calculation
+last x : can be retrieved to stack
 
 calculation between two rect. format numbers -> result in rect.
 calculation between two polar format numbersr -> result in polar

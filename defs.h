@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define SIZE 10
-#define VERSION "v0.2"
+#define VERSION "v0.3"
 
 struct z_number {
 	char sign_zre[1];
