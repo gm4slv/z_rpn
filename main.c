@@ -171,7 +171,7 @@ int main(void)
 					im = 0;
 				}	
 
-				stack_raise(z_stack, real, real_null, im, im_null, make_polar, a, i);
+				stack_raise(z_stack, real, real_null, im, im_null, make_polar);
 		
 				polar_flag = 0;	
 					
