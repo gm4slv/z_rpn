@@ -7,7 +7,6 @@ int main(void)
 
 	int a=0;	/* for iterating across the stack for raising and dropping */
 	int i;		/* points to the top level of the stack */    
-	int p;		/* redundant?*/	
 	int x;		/* for general loop control: used in various places */	
 	int real_null = 0;   /* to indicate an empty input string for controlling stack entry */
 	int im_null = 0;
@@ -24,6 +23,9 @@ int main(void)
 	float im;							/* input imaginary value */
 	
 	char opcode;						/* the requested arithmetic function (+ - * / r p i c) */ 
+	char opcode2;						/* FUTURE USE */
+	char command[2];					/* FUTURE USE */
+
 	int drop_flag;						/* a flag to control */
 	int polar_flag=0;					/* a flag indicating we're displaying a polar-format number, to control the
 										   display of @ */
@@ -80,7 +82,7 @@ int main(void)
 			make_polar = 0;
 		//	printf("reset make_polar -> %d\n", make_polar);
 
-			printf("\nEnter Real (or #_ command) : ");
+			printf("\nEnter Real (or command) : ");
 			fgets(line, sizeof(line), stdin);
 /*			printf("strlen(line) = %d\n", strlen(line)); */
 			line[strlen(line)-1] = '\0';
@@ -94,10 +96,13 @@ int main(void)
 			else
 				real_null = 0;
 
-			if (line[0] == 35) /* # to enter opcode */
+			if (line[0] > 58) /* # to enter opcode */
 			{
-				opcode = line[1];
-	/*			printf(" %c \n",opcode); */
+				opcode = line[0];
+
+				/* future use - second option for command input */
+				opcode2 = line[1]; 
+				
 				break;
 			}
 
@@ -113,19 +118,11 @@ int main(void)
 			 * */
 			else
 			{
-				if (line[0] == '\n')   /* IS THIS REDUNDANT ?? */ 
-				{
-					real = '\n';
-				}
-				else if (line[0] > 44 && line[0] < 58)
+				if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &real);
 /*					printf(" real entered %f\n", real);      */
 				}
-				else
-				{
-					real = 0;
-				}				
 				polar_flag = 0;	
 			
 
@@ -140,12 +137,7 @@ int main(void)
 				else
 					im_null = 0;
 
-				if (line[0] == '\n')     /* IS THIS REDUNDANT ?? */
-				{
-/*						printf(" ASSIGNING im = \\n !!!!! \n"); */
-						im = '\n';
-				}
-				else if (line[0] > 44 && line[0] < 58)
+				if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &im);
 /*					printf(" imag entered %f\n", im);   */
@@ -174,11 +166,7 @@ int main(void)
 
 					make_polar = 1;
 				}
-				else                /* IS THIS REDUNDANT ??? */
-				{
-					im = 0;
-				}	
-
+				
 				stack_raise(z_stack, real, real_null, im, im_null, make_polar);
 		
 				polar_flag = 0;	
@@ -442,10 +430,8 @@ int main(void)
 				 * "y" level has been dropped down from above. That's why we need the drop_temp pointer
 				 * to keep track of the (possibl) unused memory while we decide what to do */
 
-				if(drop_temp == z_stack[2])
-					;
 		//		printf("can't free z_stack[1]  %p\n", drop_temp);
-				else
+				if(drop_temp != z_stack[2])
 				{
 		//			printf("CAN free z_stack[1] \n");
 
@@ -455,13 +441,8 @@ int main(void)
 		}
 		else  /* if the DROP FLAG isn't set we check for NULL flag */
 		{
-			if(null_flag)
-				;  /*NOP if Null Flag is set */
+			if(!null_flag)
 
-			//else if(!polar_flag) /* otherwise (as long as the polar flag isn't set */
-								/* this option is for the polar -> rect option
-								 * where we don't drop, but the polar flag is unset */
-			else
 			{
 				z_stack[0]->sign_zre[0] = result->sign_zre[0];
 				z_stack[0]->sign_zim[0] = result->sign_zim[0];	
