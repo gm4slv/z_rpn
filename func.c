@@ -89,7 +89,7 @@ void help(void)
 	
 	printf("\t\tRoll Down\t[\n");
 	printf("\t\tSwap X<>Y\t]\n");
-	printf("\t\tClear X\t<\n\n");
+	printf("\t\tClear X\t\t<\n\n");
 
 	printf("\t\tThis HELP\t#h\n");
 	printf("\t\tQuit\t\t#q\n");
