@@ -11,8 +11,8 @@ It's a steep learning curve!
 
 
 
-5/9/25
--------------------------------------------
+6/9/25
+-------
 
 Features so far:
 ================
@@ -25,16 +25,16 @@ stack level to follow the same format.
 
 stack: roll-down
 stack: swap x<>y
+stack : clear x 
 
 last x : stored after a calculation
 last x : can be retrieved to stack
 
 calculation between two rect. format numbers -> result in rect.
 calculation between two polar format numbersr -> result in polar
-
 calculation between one polar and one rect. format number -> result in polar.
 
-stack and last_x state are saved at exit and restored at start
+stack and last x :  states are saved at exit and restored at start
 
 arithmetical functions:
 ------------------------

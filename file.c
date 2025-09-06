@@ -24,11 +24,20 @@ void save_state(struct z_number **state, struct z_number *lastx)
 
 void read_state(struct z_number **state, struct z_number *lastx)
 {
+
+/* a "local" struct just for this function, not declared as a
+ * pointer and therefore the members are accessed by 
+ *
+ * 	r_state.abs_zre  instead of r_state->abs_zre
+ *
+ * 	etc....
+ * 	*/
+
+
 	struct z_number r_state;
 
 	FILE *zstate;
 	int s;
-	int l;
 
 	zstate = fopen("mem.db", "r");
 	if(!zstate)
@@ -36,10 +45,15 @@ void read_state(struct z_number **state, struct z_number *lastx)
 		puts("can't open mem.db");
 		return;
 	}
+	
+	/* the file has 11 items, one per stack entry PLUS the 
+	 * lastx - assuming a SIZE of 10....
+	 *
+	 * It would be better to use i<SIZE+1 here instead of 11 */
 
 	while(!feof (zstate))
 	{
-		for(int i = 0;i<11;++i)
+		for(int i = 0;i<SIZE+1;++i)
 		{
 			s = fread(&r_state, sizeof(struct z_number), 1, zstate);
 			if(s == 0)
@@ -51,8 +65,6 @@ void read_state(struct z_number **state, struct z_number *lastx)
 				state[i]->sign_zre[0] = r_state.sign_zre[0];
 				state[i]->sign_zim[0] = r_state.sign_zim[0];
 				state[i]->polar = r_state.polar;
-				state[i]->sign_zim[1] = r_state.sign_zim[1];
-				state[i]->sign_zre[1] = r_state.sign_zre[1];
 				}
 			else
 			{	
@@ -61,8 +73,6 @@ void read_state(struct z_number **state, struct z_number *lastx)
 			lastx->sign_zre[0] = r_state.sign_zre[0];
 			lastx->sign_zim[0] = r_state.sign_zim[0];
 			lastx->polar = r_state.polar;
-			lastx->sign_zim[1] = r_state.sign_zim[1];
-			lastx->sign_zre[1] = r_state.sign_zre[1];
 			}
 		}
 	}

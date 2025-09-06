@@ -104,13 +104,72 @@ struct z_number *make_z(float in_re, float in_im, int p )
 
 	char sign_re[1];
 	char sign_im[1];
-	char pad1 = 'f';
-	char pad2 = 'e';
-	z_ptr=(struct z_number *)malloc(sizeof(struct z_number) * 1);
+
+	/* use calloc() instead of malloc() : 
+	 * to both allocate AND initiallize the full size of the struct. 
+	 * 
+	 * This is necessary because 16 bytes are allocated to the struct
+	 * (the OS likes to work in 16 byte chunks) although we only use
+	 * 14 bytes of user data:
+	 *
+	 * float real = 4
+	 * float im   = 4
+	 * int polar  = 4
+	 * char sign real = 1
+	 * char sign im   = 1
+	 *
+	 * using malloc() the remaining 2 bytes are allocated
+	 * but don't get initiallized by the 14 bytes of our data.
+	 * This only appears as a problem when we write the struct
+	 * to a file (save state) - and valgrind complains of
+	 * un-initialized memory. Everything WORKS - but it isn't 
+	 * "right".
+	 *
+	 * By using calloc() we initiallize the full 16 bytes of the 
+	 * struct, and then are free to only put in 14 bytes of user data
+	 * - valgrind is happy and we aren't writing un-initiallized memory
+	 *   contents to the save state file.
+	 *
+	 ******************************************************************
+	 *
+	 * Another way around this, using malloc(), is to increase the
+	 * amount of user data we store in the struct by 2 bytes
+	 * I tested this by adding a second character to the "sign" char
+	 *
+	 * in defs.h
+	 *
+	 * char sign_zre[2];
+	 * char sign_zim[2]; 
+	 *
+	 *
+	 * in the struct prototype, and then when making a new z_number
+	 * I'd add a second (padding) character:
+	 *
+	 * in make_z()
+	 *
+	 * z_ptr->sign_zre[1] = 'f';
+	 * z_ptr->sign_zim[1] = 'e';
+	 *
+	 * this meant that we had to assign these extra chars when reading the
+	 * state file, even though they aren't of any use.
+	 *
+	 * In read_state()
+	 *
+	 * state[x]->sign_zre[1] = r_state.sign_zre[1];
+	 * state[x]->sign_zim[1] = r_state.sign_zre[1];
+	 *
+	 * lastx->sign_zre[1] = r_state.sign_zre[1];
+	 * lastx->sign_zim[1] = r_state.sign_zim[1];
+	 *
+	 * Simpler to just use calloc() in the first place. 
+	 *
+	 ***********************************************************************/
+
+	z_ptr=(struct z_number *)calloc(1,sizeof(struct z_number));
 	
 	if ( z_ptr == NULL)
 	{
-		puts("Malloc() error");
+		puts("calloc() error");
 		exit(1);
 	}
 	
@@ -144,19 +203,12 @@ struct z_number *make_z(float in_re, float in_im, int p )
 	 * pointer for the location of the filled-in-with-data struct */
 
 	z_ptr->sign_zre[0] = sign_re[0];
-	/*
-	if(!p)
-		z_ptr->sign_zim[0] = sign_im[0];
-	else
-		z_ptr->sign_zim[0] = '@';
-	*/
 
 	z_ptr->sign_zim[0] = sign_im[0];
 	z_ptr->abs_zre = in_re;
 	z_ptr->abs_zim = in_im;
 	z_ptr->polar = p;
-	z_ptr->sign_zim[1] = 'f';
-	z_ptr->sign_zre[1] = 'f';
+	
 	return (z_ptr);
 }
 
