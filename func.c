@@ -73,20 +73,23 @@ void help(void)
 	printf("\tat the \"Enter Imaginary:\" prompt enter the imaginary part.\n");
 	printf("\tFor zero just press <enter>\n\n");
 
-	printf("\tCommands are prefix by #: \n");
-	printf("\t\tAdd\t\t#a\n");
-	printf("\t\tSubtract\t#s\n");
-	printf("\t\tMultiply\t#m\n");
-	printf("\t\tDivide\t\t#d\n\n");
-	printf("\t\tInverse 1/z\t#i\n");
-	printf("\t\tComplex Conj.\t#c\n\n");
-	printf("\t\tDot product\t#.\n");
-	printf("\t\tCross product\t#x\n");
-	printf("\t\tUnit Vector\t#u\n\n");
-	printf("\t\tRect -> Polar\t#p\n");
-	printf("\t\tPolar -> Rect\t#r\n\n");
-	printf("\t\tRoll Down\t#[\n");
-	printf("\t\tSwap X<>Y\t#]\n\n");
+	printf("\tCommands are :  \n");
+	printf("\t\tAdd\t\ta\n");
+	printf("\t\tSubtract\ts\n");
+	printf("\t\tMultiply\tm\n");
+	printf("\t\tDivide\t\td\n\n");
+	printf("\t\tInverse 1/z\ti\n");
+	printf("\t\tComplex Conj.\tc\n\n");
+	
+	printf("\t\tDot product\t.\n");
+	printf("\t\tCross product\tx\n");
+	printf("\t\tUnit Vector\tu\n\n");
+	printf("\t\tRect -> Polar\tp\n");
+	printf("\t\tPolar -> Rect\tr\n\n");
+	
+	printf("\t\tRoll Down\t[\n");
+	printf("\t\tSwap X<>Y\t]\n");
+	printf("\t\tClear X\t\t<\n\n");
 
 	printf("\t\tThis HELP\t#h\n");
 	printf("\t\tQuit\t\t#q\n");
