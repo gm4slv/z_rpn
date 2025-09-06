@@ -2,7 +2,7 @@
 
 
 
-void drop_stack(struct z_number **z_stack, struct z_number *result, int drop_flag, int null_flag )
+void stack_drop(struct z_number **z_stack, struct z_number *result, int polar_flag, int drop_flag, int null_flag )
 {
 
 		/*************************************
@@ -12,7 +12,10 @@ void drop_stack(struct z_number **z_stack, struct z_number *result, int drop_fla
 		 * **********************************
 		 */
 
-
+		int a;
+		int i;
+		i = SIZE-1;
+		struct z_number *drop_temp; 
 		if(drop_flag)
 		{
 			a = 1;
