@@ -97,14 +97,15 @@ void help(void)
 }
 
 
-struct z_number *make_z(float in_re, float in_im, int p)
+struct z_number *make_z(float in_re, float in_im, int p )
 {
 
 	struct z_number *z_ptr;
 
 	char sign_re[1];
 	char sign_im[1];
-
+	char pad1 = 'f';
+	char pad2 = 'e';
 	z_ptr=(struct z_number *)malloc(sizeof(struct z_number) * 1);
 	
 	if ( z_ptr == NULL)
@@ -113,7 +114,7 @@ struct z_number *make_z(float in_re, float in_im, int p)
 		exit(1);
 	}
 	
-
+	
 	/* we store the absolute value of real & imaginary along with the 
 	 * char representing the sign. */
 	if (in_re < 0)
@@ -154,7 +155,8 @@ struct z_number *make_z(float in_re, float in_im, int p)
 	z_ptr->abs_zre = in_re;
 	z_ptr->abs_zim = in_im;
 	z_ptr->polar = p;
-	
+	z_ptr->sign_zim[1] = 'f';
+	z_ptr->sign_zre[1] = 'f';
 	return (z_ptr);
 }
 

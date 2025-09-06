@@ -4,14 +4,17 @@
 #include <math.h>
 
 #define SIZE 10
-#define VERSION "v0.4"
+#define VERSION "v0.5"
 
 struct z_number {
-	char sign_zre[1];
-	char sign_zim[1];
-	float abs_zre;
-	float abs_zim;
-	int polar;
+	char sign_zre[2]; /* sign members have 2 bytes to pad the whole */
+					  /* struct out to 16 bytes */
+	char sign_zim[2]; /* this makes it align in memory and prevents valgrind  */
+	float abs_zre;    /* warnings when saving state file */
+	float abs_zim;    /* the additional chars are just assigned */
+	int polar;        /* a letter in make_z and are read back into */
+					  /* the stack and last-x when the state is read */
+   					  /* at start-up, to keep valgrind happy */	
 };
 
 
@@ -22,7 +25,7 @@ struct z_number {
 
 /* a function to create the struct (pointer) when given the 
  * real and imaginary parts of a complex number */
-struct z_number *make_z(float zre, float zim, int p);
+struct z_number *make_z(float zre, float zim, int p );
 
 /* a funtion to add two complex numbers and put the result into 
  * result struct */
