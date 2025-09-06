@@ -61,17 +61,14 @@ void help(void)
 	
 	printf("\tUsage:\n");
 
-	printf("\n\tAt the \"Enter Real\" prompt type either:\n");
-    printf("\tA command prefixed by the # sign\n");
-	printf("\t\tor\n");
-    printf("\tbegin a number entry with real part <enter> imaginary part <enter> \n");
-
-	printf("\n\tFor number entry type:\n");
-    printf("\tthe number and press <enter>\n");
-	printf("\tFor zero just press <enter>\n\n");
-	printf("\tAll numbers are treated as complex\n");
-	printf("\tat the \"Enter Imaginary:\" prompt enter the imaginary part.\n");
-	printf("\tFor zero just press <enter>\n\n");
+	printf("\n\tAt the \"Enter Real:\" prompt type either:\n");
+    printf("\tA command or begin a (complex) number entry with the Real part\n");
+	printf("\tFor zero just press <enter> on its own\n\n");
+	printf("\tAll numbers are treated as complex so then\n");
+	printf("\tat the \"Enter Imaginary:\" prompt type the imaginary part <enter>\n");
+	printf("\tFor zero just press <enter> on its own\n\n");
+	printf("\tLeaving the entry blank and pressing <enter><enter> will copy the\n");
+	printf("\tcurrent 'x' stack up into 'y' and raise the stack\n\n");
 
 	printf("\tCommands are :  \n");
 	printf("\t\tAdd\t\ta\n");

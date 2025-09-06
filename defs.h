@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-#define SIZE 10
+#define SIZE 8
 #define VERSION "v0.5"
 
 struct z_number {

@@ -11,7 +11,7 @@ void save_state(struct z_number **state, struct z_number *lastx)
 		puts("can't open mem.db");
 		exit(1);
 	}
-	for(int i = 0;i<10;++i)
+	for(int i = 0;i<SIZE;++i)
 
 		fwrite(state[i], sizeof(struct z_number),1,zstate);
 
@@ -58,7 +58,7 @@ void read_state(struct z_number **state, struct z_number *lastx)
 			s = fread(&r_state, sizeof(struct z_number), 1, zstate);
 			if(s == 0)
 				break;
-			if(i<10)
+			if(i<SIZE)
 			{
 				state[i]->abs_zre =  r_state.abs_zre;
 				state[i]->abs_zim =  r_state.abs_zim;
