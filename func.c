@@ -13,7 +13,7 @@ void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointe
 	polar_char = ' ';
 
 	printf("\n\n==================...z rpn.%s....==================\n\n", VERSION);
-
+	printf("stack\t\tstack address\t\tz_number address \n");
 	for (x=SIZE-1;x>=0;--x)
 	{
 		if(p[x]->polar == 1) /* check the "polar" member of the z_stack pointer being handled
@@ -48,7 +48,8 @@ void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointe
 			polar_char = ' ';
 
 		printf("\n------------------------------------------------------\n");
-		printf("last_x\t\t%c%.3f %c %c%.3f j \n", 
+		printf("last_x\t\t&last_x %p\t*(&last_x) %p\t%c%.3f %c %c%.3f j \n", 
+			&last_x,*(&last_x),
 			last_x->sign_zre[0], last_x->abs_zre,
 			polar_char,
 			last_x->sign_zim[0], last_x->abs_zim);
