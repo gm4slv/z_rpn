@@ -48,7 +48,7 @@ void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointe
 			polar_char = ' ';
 
 		printf("\n------------------------------------------------------\n");
-		printf("last_x\t\t%c%.3f %c %c%.3f j \n", 
+		printf("  last_x\t\t%c%.3f %c %c%.3f j \n", 
 			last_x->sign_zre[0], last_x->abs_zre,
 			polar_char,
 			last_x->sign_zim[0], last_x->abs_zim);
