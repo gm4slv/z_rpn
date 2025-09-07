@@ -19,15 +19,15 @@ int main(void)
 	struct z_number *result;			/* a pointer to the result of a calculation */
 	struct z_number *temp;				/* a temporary pointer to a potential free-able memory, after a stack-raise */
 	struct z_number *swap_temp;			/* a temporary pointer for the "swap x<>y" function */
-	float real;							/* input real value */
-	float im;							/* input imaginary value */
+	float real = 0;							/* input real value */
+	float im = 0;							/* input imaginary value */
 	
-	char opcode;						/* the requested arithmetic function (+ - * / r p i c) */ 
-	char opcode2;						/* FUTURE USE */
+	char opcode = ' ';						/* the requested arithmetic function (+ - * / r p i c) */ 
+	char opcode2 = ' ';						/* FUTURE USE */
 	char command[2];					/* FUTURE USE */
 
-	int drop_flag;						/* a flag to control */
-	int polar_flag=0;					/* a flag indicating we're displaying a polar-format number, to control the
+	int drop_flag = 0;						/* a flag to control */
+	int polar_flag = 0;					/* a flag indicating we're displaying a polar-format number, to control the
 										   display of @ */
 
 	int null_flag = 0;					/* a flag to do an NOP on the stack following an un-recognizable user entry 
@@ -35,7 +35,7 @@ int main(void)
 	
 	char line[20];						/* a char-string to hold the user input prior to parsing */
 	
-	int make_polar;						/* a flag to send to make_z() when the user enters an imaginary part prefixed by @ 
+	int make_polar = 0;						/* a flag to send to make_z() when the user enters an imaginary part prefixed by @ 
 										   to indicate a polar format input */
 
     /* Initializing the stack
@@ -51,8 +51,8 @@ int main(void)
 
 	for(i=0;i<SIZE;++i)
 	{
-		z_stack[i] = make_z(0,0,0);
-		mem[i] = make_z(0,0,0);
+		z_stack[i] = make_z(real, im, make_polar);
+		mem[i] = make_z(real, im, make_polar);
 	}
 
 	if (i > SIZE-1)
@@ -67,6 +67,9 @@ int main(void)
 
 	/* show_stack() is a function that takes the hase address of
 	 * the z_stack and iterates across each element */
+	
+//	printf("to show_stack() before while loop starts \n");
+
 	show_stack(z_stack, last_x, mem);
 	
 
@@ -80,9 +83,9 @@ int main(void)
 		 * selection of the wanted operation */
 		while(1)
 		{	
-		//	printf("At start of entty while with make_polar = %d\n", make_polar);
+//			printf("At start of entry while with make_polar = %d\n", make_polar);
 			make_polar = 0;
-		//	printf("reset make_polar -> %d\n", make_polar);
+//			printf("reset make_polar -> %d\n", make_polar);
 
 			printf("\nEnter Real (or command) : ");
 			fgets(line, sizeof(line), stdin);
@@ -123,7 +126,7 @@ int main(void)
 				if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &real);
-/*					printf(" real entered %f\n", real);      */
+//					printf(" real entered %f\n", real);      
 				}
 				polar_flag = 0;	
 			
@@ -142,7 +145,7 @@ int main(void)
 				if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &im);
-/*					printf(" imag entered %f\n", im);   */
+//					printf(" imag entered %f\n", im);   
 				}
 
 				
@@ -168,11 +171,26 @@ int main(void)
 
 					make_polar = 1;
 				}
+				else
+				{
+//					printf("Huh\n");
+					real = 0;
+					im = 0;
+					make_polar = 0;
+					//break;
+				}
+
+				
+	//			printf(" imag entered %f\n", im);   
 				
 				stack_raise(z_stack, real, real_null, im, im_null, make_polar);
 		
 				polar_flag = 0;	
-					
+
+				
+	//			printf("going to show_stack() after imag entry \n");	
+				
+				
 				show_stack(z_stack, last_x, mem);
 		
 			}
@@ -410,6 +428,8 @@ int main(void)
 		 */
 
 		stack_drop(z_stack, result, polar_flag, drop_flag, null_flag);
+		
+//		printf("going to show_stack() after stack_drop()\n");
 
 		show_stack(z_stack, last_x, mem);
 

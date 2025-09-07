@@ -9,6 +9,8 @@ void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **
 {
 	char polar_char; 	/* display formatting - the polar char is either a space or a @ */
 	int x;				/* for looping across the stack array */
+	
+//	printf("in show_stack() \n");
 
 	polar_char = ' ';
 

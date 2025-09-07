@@ -101,7 +101,7 @@ void save_mem(struct z_number **mem)
 
 
 	fclose(zstate);
-	puts("...state saved");
+	puts("...mems saved");
 
 }
 
@@ -152,7 +152,7 @@ void read_mem(struct z_number **mem)
 	}
 
 	fclose(zstate);
-	printf("\nState retrieved...");
+	printf("\nMems retrieved...");
 }
 
 
