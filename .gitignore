@@ -4,4 +4,4 @@ a.out
 .*swp
 zrpn
 mem.db
-state.db
+state.*
