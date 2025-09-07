@@ -55,12 +55,17 @@ void stack_raise(struct z_number **p, float real,int real_null, float im, int im
 
 struct z_number *make_lastx(struct z_number *x);
 
-void push_lastx(struct z_number **stack, struct z_number *lastx);
+struct z_number *make_mem(struct z_number *x, int opcode2);
 
-void show_stack(struct z_number **p, struct z_number *last_x);
+void push_lastx(struct z_number **stack, struct z_number *lastx);
+void push_mem(struct z_number **stack, struct z_number *mem);
+
+void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **mem);
 
 void save_state(struct z_number **state, struct z_number *lastx);
 void read_state(struct z_number **state, struct z_number *lastx);
+void save_mem(struct z_number **mem);
+void read_mem(struct z_number **mem);
 
 void help(void);
 

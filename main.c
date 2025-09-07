@@ -14,10 +14,10 @@ int main(void)
 	struct z_number *z_stack[SIZE];		/* the complex stack = holds pointers to the complex numbers */
 
 	struct z_number *last_x;			/* a pointer to the last-x */
+	struct z_number *mem[SIZE];			/* a pointer to the last-x */
 
 	struct z_number *result;			/* a pointer to the result of a calculation */
 	struct z_number *temp;				/* a temporary pointer to a potential free-able memory, after a stack-raise */
-	struct z_number *drop_temp;			/* a temporary pointer to a potential free-able membry, after a stack-drop  */
 	struct z_number *swap_temp;			/* a temporary pointer for the "swap x<>y" function */
 	float real;							/* input real value */
 	float im;							/* input imaginary value */
@@ -52,6 +52,7 @@ int main(void)
 	for(i=0;i<SIZE;++i)
 	{
 		z_stack[i] = make_z(0,0,0);
+		mem[i] = make_z(0,0,0);
 	}
 
 	if (i > SIZE-1)
@@ -62,10 +63,11 @@ int main(void)
 	/* READ SAVED STATE */
 
 	read_state(z_stack, last_x);
+	read_mem(mem);
 
 	/* show_stack() is a function that takes the hase address of
 	 * the z_stack and iterates across each element */
-	show_stack(z_stack, last_x);
+	show_stack(z_stack, last_x, mem);
 	
 
 	/* start the endless process */
@@ -101,7 +103,7 @@ int main(void)
 				opcode = line[0];
 
 				/* future use - second option for command input */
-				opcode2 = line[1]; 
+				opcode2 = line[1]-'0'; 
 				
 				break;
 			}
@@ -171,7 +173,7 @@ int main(void)
 		
 				polar_flag = 0;	
 					
-				show_stack(z_stack, last_x);
+				show_stack(z_stack, last_x, mem);
 		
 			}
 		}	    /* the WHILE() loop spins, looking for more user input */
@@ -335,6 +337,18 @@ int main(void)
 				drop_flag = 0;
 				null_flag = 1;
 				break;
+			case 'j':
+				free(mem[opcode2]);
+				mem[opcode2] = make_mem(z_stack[0], opcode2);
+				drop_flag = 0;
+				null_flag = 1;
+				break;
+			case 'k':
+				push_mem(z_stack, mem[opcode2]);
+				drop_flag = 0;
+				null_flag = 1;
+				break;
+			
 			case 'h':										/* a rudimentary HELP feature...... */
 				help();
 				drop_flag = 0;
@@ -346,6 +360,7 @@ int main(void)
 															   free them as approriate
 																 */
 				save_state(z_stack,last_x);
+				save_mem(mem);
 
 				for (x = SIZE-1;x>0;--x)
 				{
@@ -364,7 +379,12 @@ int main(void)
 				free(z_stack[0]);
 			/*	printf("....freeing last_x .... %p\n", last_x); */
 				free(last_x);
-
+				
+				for (x = 0; x<SIZE; ++x)
+				{
+					free(mem[x]);
+				}
+			
 				return(0);									/* Gracefully QUIT the program */
 
 			default:
@@ -391,7 +411,7 @@ int main(void)
 
 		stack_drop(z_stack, result, polar_flag, drop_flag, null_flag);
 
-		show_stack(z_stack, last_x);
+		show_stack(z_stack, last_x, mem);
 
 		}  		/* the INNER while() loop spins */
     return 0;

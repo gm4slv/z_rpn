@@ -3,7 +3,7 @@
 
 
 
-void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointer-to-pointer - the z_stack variable is passed in
+void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **mem)  /* takes a pointer-to-pointer - the z_stack variable is passed in
 										 which is a pointer to the pointer members of the stack array
 										 which themselves hold pointers to the z_number struct locations.*/
 {
@@ -52,6 +52,20 @@ void show_stack(struct z_number **p, struct z_number *last_x)  /* takes a pointe
 			polar_char,
 			last_x->sign_zim[0], last_x->abs_zim);
 			
+		printf("\n-------------------------------------------------------\n");
+	
+		for (x=SIZE-1;x>=0;--x)
+		{	
+			if(mem[x]->polar == 1)
+				polar_char = '@';
+			else
+				polar_char = ' ';
+			printf("  mem[%d]\t\t%c%.3f %c %c%.3f j \n",
+				x,
+				mem[x]->sign_zre[0], mem[x]->abs_zre,
+				polar_char,
+				mem[x]->sign_zim[0], mem[x]->abs_zim);
+		}
 }
 
 
