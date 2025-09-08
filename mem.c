@@ -9,7 +9,7 @@ struct z_number *make_mem(struct z_number *x, int opcode2)
 
 	struct z_number *mem_ptr;
 
-	printf("In make_mem with opcode %d, re %.3f, im %.3f \n", opcode2, x->abs_zre, x->abs_zim);
+//	printf("In make_mem with opcode %d, re %.3f, im %.3f \n", opcode2, x->abs_zre, x->abs_zim);
 
 	if(x->sign_zre[0] == '-')
 		real = x->abs_zre * -1;
@@ -46,7 +46,7 @@ void push_mem(struct z_number **stack, struct z_number *mem)
 
 	polar = mem->polar;
 	
-	printf("In push_mem with real %.3f, im %.3f\n", real, im);
+//	printf("In push_mem with real %.3f, im %.3f\n", real, im);
 
 	stack_raise(stack, real, 0, im, 0, polar);
 }
