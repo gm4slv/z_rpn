@@ -357,13 +357,13 @@ int main(void)
 				null_flag = 1;
 				break;
 			case 'j':
-				free(mem[opcode2]);
-				mem[opcode2] = make_mem(z_stack[0], opcode2);
+				free(mem[opcode2-1]);
+				mem[opcode2-1] = make_mem(z_stack[0], opcode2-1);
 				drop_flag = 0;
 				null_flag = 1;
 				break;
 			case 'k':
-				push_mem(z_stack, mem[opcode2]);
+				push_mem(z_stack, mem[opcode2-1]);
 				drop_flag = 0;
 				null_flag = 1;
 				break;
