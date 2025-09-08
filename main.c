@@ -267,6 +267,15 @@ int main(void)
 				result = clear_z();
 				drop_flag = 0;
 				break;
+			case '>':
+				for(x=0;x<SIZE;++x)
+					{
+						free(z_stack[x]);
+						z_stack[x] = make_z(0, 0, 0);
+					}
+				drop_flag=0;
+				null_flag=1;
+				break;
 			case '.':
 				free(last_x);
 				last_x = make_lastx(z_stack[0]);

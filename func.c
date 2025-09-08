@@ -2,6 +2,9 @@
 
 
 
+
+
+
 void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **mem)  /* takes a pointer-to-pointer - the z_stack variable is passed in
 										 which is a pointer to the pointer members of the stack array
 										 which themselves hold pointers to the z_number struct locations.*/
@@ -186,22 +189,23 @@ void help(void)
 	printf("\tcurrent 'x' stack up into 'y' and raise the stack\n\n");
 
 	printf("\tCommands are :  \n");
-	printf("\t\tAdd\t\ta\n");
-	printf("\t\tSubtract\ts\n");
-	printf("\t\tMultiply\tm\n");
-	printf("\t\tDivide\t\td\n\n");
-	printf("\t\tInverse 1/z\ti\n");
-	printf("\t\tComplex Conj.\tc\n\n");
+	printf("\t\tA)dd\t\ta\n");
+	printf("\t\tS)ubtract\ts\n");
+	printf("\t\tM)ultiply\tm\n");
+	printf("\t\tD)ivide\t\td\n\n");
+	printf("\t\tI)nverse 1/z\ti\n");
+	printf("\t\tC)omplex Conj.\tc\n\n");
 	
-	printf("\t\tDot product\t.\n");
-	printf("\t\tCross product\tx\n");
-	printf("\t\tUnit Vector\tu\n\n");
-	printf("\t\tRect -> Polar\tp\n");
-	printf("\t\tPolar -> Rect\tr\n\n");
+	printf("\t\t.)Dot product\t.\n");
+	printf("\t\tx)Cross product\tx\n");
+	printf("\t\tU)nit Vector\tu\n\n");
+	printf("\t\tRect -> P)olar\tp\n");
+	printf("\t\tPolar -> R)ect\tr\n\n");
 	
 	printf("\t\tRoll Down\t[\n");
 	printf("\t\tSwap X<>Y\t]\n");
-	printf("\t\tClear X\t\t<\n\n");
+	printf("\t\tClear X\t\t<\n");
+	printf("\t\tClear Stack\t>\n\n");
 
 	printf("\t\tThis HELP\t#h\n");
 	printf("\t\tQuit\t\t#q\n");
