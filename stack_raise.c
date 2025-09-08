@@ -66,8 +66,13 @@ void stack_raise(struct z_number **p, float real, int real_null, float im, int i
 				 *   raises with the old x-stack value copied into
 				 *   y.
 				 */
+
+		//		printf("before null detect real %.3f, im %.3f\n", real, im);
+
 				if (real_null == 1 && im_null == 1)   
 				{
+		//			printf("real_null %d im_null %d\n", real_null, im_null);
+
 					real = p[0]->abs_zre;
 					if(p[0]->sign_zre[0] == '-')
 					{
@@ -87,6 +92,7 @@ void stack_raise(struct z_number **p, float real, int real_null, float im, int i
 
 				else      
 				{
+		//			printf("real %.3f, real_null %d, im, %.3f im_null %d\n", real, real_null,im, im_null);
 					if (real_null == 1)      
 					{
 						real = 0;
@@ -96,7 +102,9 @@ void stack_raise(struct z_number **p, float real, int real_null, float im, int i
 						im = 0;
 					}
 				}
-				
+			
+		//		printf("going to make_z() with real %.3f, im %.3f\n", real, im);
+
 				/* now we assign the pointer help in x (z_stack[0] ) to 
 				 * be the the newly created z_number entered by the user
 				 */

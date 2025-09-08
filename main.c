@@ -126,7 +126,7 @@ int main(void)
 				if (line[0] > 44 && line[0] < 58)
 				{
 					sscanf(line, "%f", &real);
-//					printf(" real entered %f\n", real);      
+			//		printf(" real entered %f\n", real);      
 				}
 				polar_flag = 0;	
 			
@@ -173,16 +173,17 @@ int main(void)
 				}
 				else
 				{
-//					printf("Huh\n");
-					real = 0;
-					im = 0;
-					make_polar = 0;
+				;//	printf("Huh\n");
+				//	real = 0;
+				//	im = 0;
+				//	make_polar = 0;
 					//break;
 				}
 
 				
 	//			printf(" imag entered %f\n", im);   
-				
+			
+	//			printf("in main()... going to stack_raise() with real %.3f, im %.3f\n", real, im);	
 				stack_raise(z_stack, real, real_null, im, im_null, make_polar);
 		
 				polar_flag = 0;	
