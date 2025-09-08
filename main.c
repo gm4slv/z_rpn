@@ -357,8 +357,11 @@ int main(void)
 				null_flag = 1;
 				break;
 			case 'j':
-				free(mem[opcode2-1]);
-				mem[opcode2-1] = make_mem(z_stack[0], opcode2-1);
+				if(opcode2 > 0 && opcode2 <= SIZE)
+				{
+					free(mem[opcode2-1]);
+					mem[opcode2-1] = make_mem(z_stack[0], opcode2-1);
+				}
 				drop_flag = 0;
 				null_flag = 1;
 				break;

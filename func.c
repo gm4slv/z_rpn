@@ -25,15 +25,15 @@ void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **
 
 
 		if(x == 1)
-			printf("\n");
+			printf(". . . . . . . . . . . . . . . . . . . . . . . . . . . . \n");
 
 		/* print the members of the stack pointer's z_number struct  (we do down from top
 		 * to ""y" in one block */
-		if (p[x]->abs_zre > 10000 || p[x]->abs_zre < 0.001)
+		if (p[x]->abs_zre > 10000 || (p[x]->abs_zre < 0.001 && p[x]->abs_zre != 0))
 		{
-			if(p[x]->abs_zim > 10000 || p[x]->abs_zim < 0.001)
+			if(p[x]->abs_zim > 10000 || (p[x]->abs_zim < 0.001 && p[x]->abs_zim != 0))
 			{
-				printf(" %0d:\t\t%c%.3E %c %c%.3E j \n",
+				printf(" %0d:\t\t%c%.3E\t%c %c%.3E j \n",
 					x+1, 
 					p[x]->sign_zre[0], p[x]->abs_zre,
 					polar_char,
@@ -42,7 +42,7 @@ void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **
 			else
 			{
 
-				printf(" %0d:\t\t%c%.3E %c %c%.3f j \n",
+				printf(" %0d:\t\t%c%.3E\t%c %c%9.3f j \n",
 					x+1, 
 					p[x]->sign_zre[0], p[x]->abs_zre,
 					polar_char,
@@ -51,9 +51,9 @@ void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **
 		}
 		else
 		{
-			if(p[x]->abs_zim > 10000 || p[x]->abs_zim < 0.001 )
+			if(p[x]->abs_zim > 10000 || ( p[x]->abs_zim < 0.001 && p[x]->abs_zim != 0) )
 			{
-				printf(" %0d:\t\t%c%.3f %c %c%.3E j \n",
+				printf(" %0d:\t\t%c%9.3f\t%c %c%.3E j \n",
 					x+1, 
 					p[x]->sign_zre[0], p[x]->abs_zre,
 					polar_char,
@@ -61,7 +61,7 @@ void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **
 			}
 			else
 			{
-				printf(" %0d:\t\t%c%.3f %c %c%.3f j \n",
+				printf(" %0d:\t\t%c%9.3f\t%c %c%9.3f j \n",
 					x+1, 
 					p[x]->sign_zre[0], p[x]->abs_zre,
 					polar_char,
@@ -82,10 +82,41 @@ void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **
 			polar_char = ' ';
 
 		printf("\n------------------------------------------------------\n");
-		printf("  last_x\t\t%c%.3f %c %c%.3f j \n", 
-			last_x->sign_zre[0], last_x->abs_zre,
-			polar_char,
-			last_x->sign_zim[0], last_x->abs_zim);
+		if (last_x->abs_zre > 10000 || (last_x->abs_zre < 0.001 && last_x->abs_zre != 0))
+		{
+			if(last_x->abs_zim > 10000 || (last_x->abs_zim < 0.001 && last_x->abs_zim != 0))
+				{
+					printf(" last x:\t%c%.3E\t%c %c%.3E j \n",
+						last_x->sign_zre[0], last_x->abs_zre,
+						polar_char,
+					last_x->sign_zim[0], last_x->abs_zim);
+			}
+			else
+			{
+
+				printf(" last x:\t%c%.3E\t%c %c%9.3f j \n",
+					last_x->sign_zre[0], last_x->abs_zre,
+					polar_char,
+					last_x->sign_zim[0], last_x->abs_zim);
+			}
+		}
+		else
+		{
+			if(last_x->abs_zim > 10000 || ( last_x->abs_zim < 0.001 && last_x->abs_zim != 0) )
+			{
+				printf(" last x:\t%c%9.3f\t%c %c%.3E j \n",
+					last_x->sign_zre[0], last_x->abs_zre,
+					polar_char,
+					last_x->sign_zim[0], last_x->abs_zim);
+			}
+			else
+			{
+				printf(" last x:\t%c%9.3f\t%c %c%9.3f j \n",
+					last_x->sign_zre[0], last_x->abs_zre,
+					polar_char,
+					last_x->sign_zim[0], last_x->abs_zim);
+			}
+		}	
 			
 		printf("\n");
 	//	printf("\n-------------------------------------------------------\n");
@@ -96,11 +127,45 @@ void show_stack(struct z_number **p, struct z_number *last_x, struct z_number **
 				polar_char = '@';
 			else
 				polar_char = ' ';
-			printf("  mem %d\t\t%c%.3f %c %c%.3f j \n",
-				x+1,
-				mem[x]->sign_zre[0], mem[x]->abs_zre,
-				polar_char,
-				mem[x]->sign_zim[0], mem[x]->abs_zim);
+				if (mem[x]->abs_zre > 10000 || (mem[x]->abs_zre < 0.001 && mem[x]->abs_zre != 0))
+		{
+			if(mem[x]->abs_zim > 10000 || (mem[x]->abs_zim < 0.001 && mem[x]->abs_zim != 0))
+			{
+				printf(" mem %0d:\t\t%c%.3E\t%c %c%.3E j \n",
+					x+1, 
+					mem[x]->sign_zre[0], mem[x]->abs_zre,
+					polar_char,
+					mem[x]->sign_zim[0], mem[x]->abs_zim);
+			}
+			else
+			{
+
+				printf(" mem %0d:\t\t%c%.3E\t%c %c%9.3f j \n",
+					x+1, 
+					mem[x]->sign_zre[0], mem[x]->abs_zre,
+					polar_char,
+					mem[x]->sign_zim[0], mem[x]->abs_zim);
+			}
+		}
+		else
+		{
+			if(mem[x]->abs_zim > 10000 || ( mem[x]->abs_zim < 0.001 && mem[x]->abs_zim != 0) )
+			{
+				printf(" mem %0d:\t\t%c%9.3f\t%c %c%.3E j \n",
+					x+1, 
+					mem[x]->sign_zre[0], mem[x]->abs_zre,
+					polar_char,
+					mem[x]->sign_zim[0], mem[x]->abs_zim);
+			}
+			else
+			{
+				printf(" mem %0d:\t\t%c%9.3f\t%c %c%9.3f j \n",
+					x+1, 
+					mem[x]->sign_zre[0], mem[x]->abs_zre,
+					polar_char,
+					mem[x]->sign_zim[0], mem[x]->abs_zim);
+			}
+		}
 		}
 }
 
