@@ -7,16 +7,6 @@ const float PI = 3.14159265359;
  *
  * this might become the default divide_z() function  */
 
-struct z_number *clear_z(void)
-{
-	struct z_number *result_ptr;
-
-
-    result_ptr = make_z(0, 0, 0);
-
-	return result_ptr;
-}
-
 
 
 struct z_number *divide2_z(struct z_number *z1, struct z_number *z2)

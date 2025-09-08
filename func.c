@@ -2,6 +2,16 @@
 
 
 
+struct z_number *clear_z(void)
+{
+	struct z_number *result_ptr;
+
+
+    result_ptr = make_z(0, 0, 0);
+
+	return result_ptr;
+}
+
 
 
 
